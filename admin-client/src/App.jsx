@@ -1,7 +1,6 @@
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Signin from "./components/Signin.jsx";
 import Signup from "./components/Signup.jsx";
-import Appbar from "./components/Appbar.jsx";
 import AddCourse from "./components/AddCourse.jsx";
 import Courses from "./components/Courses";
 import Course from "./components/Course";
@@ -23,7 +22,6 @@ function App() {
                 backgroundColor: "#eeeeee"}}
             >
                     <Router>
-                        <Appbar />
                         <InitUser />
                         <Routes>
                             <Route path={"/addcourse"} element={<AddCourse />} />
