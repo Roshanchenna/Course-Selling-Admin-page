@@ -1,9 +1,9 @@
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import Signin from "./components/Signin.jsx";
-import Signup from "./components/Signup.jsx";
-import AddCourse from "./components/AddCourse.jsx";
-import Courses from "./components/Courses";
-import Course from "./components/Course";
+import Signin from "./components/admin/Signin.jsx";
+import Signup from "./components/admin/Signup.jsx";
+import AddCourse from "./components/Admin/AddCourse.jsx";
+import Courses from "./components/Admin/Courses.jsx";
+import Course from "./components/Admin/Course.jsx";
 import {Landing} from "./components/Landing.jsx";
 import { userState } from "./store/atoms/user.js";
 import {
@@ -26,11 +26,11 @@ function App() {
                 <Router>
                     <InitUser />
                     <Routes>
-                        <Route path={"/addcourse"} element={<AddCourse />} />
-                        <Route path={"/course/:courseId"} element={<Course />} />
-                        <Route path={"/courses"} element={<Courses />} />
-                        <Route path={"/signin"} element={<Signin />} />
-                        <Route path={"/signup"} element={<Signup />} />
+                        <Route path={"/Admin/addcourse"} element={<AddCourse />} />
+                        <Route path={"/Admin/course/:courseId"} element={<Course />} />
+                        <Route path={"/Admin/courses"} element={<Courses />} />
+                        <Route path={"/Admin/signin"} element={<Signin />} />
+                        <Route path={"/Admin/signup"} element={<Signup />} />
                         <Route path={"/"} element={<Landing />} />
                     </Routes>
                 </Router>

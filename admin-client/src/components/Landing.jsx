@@ -1,4 +1,4 @@
-import { Box, Container, Typography, Button } from "@mui/material";
+import { Box, Container, Typography, Button, Grid, Paper } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 
 export const Landing = () => {
@@ -8,60 +8,75 @@ export const Landing = () => {
         <Box sx={{ 
             height: '100vh',
             width: '100%',
-            bgcolor: '#f0f4f8',
+            backgroundColor: '#f0f8ff', // Light blue background
             display: 'flex',
-            flexDirection: 'column',
-            justifyContent: 'center',
             alignItems: 'center',
-            overflow: 'hidden',
-            position: 'relative',
+            overflow: 'hidden', // Prevent scrolling
         }}>
-            <Container maxWidth="md" sx={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)' }}>
-                <Box sx={{ textAlign: 'center' }}>
-                    <Typography variant="h2" component="h1" gutterBottom sx={{ fontWeight: 700, color: '#1976d2' }}>
-                        Coursera Admin
-                    </Typography>
-                    <Typography variant="h5" sx={{ mb: 4, color: '#34495e' }}>
-                        Empower Your Educational Institution
-                    </Typography>
-                    <Typography variant="body1" sx={{ mb: 6, color: '#7f8c8d', maxWidth: '600px', mx: 'auto' }}>
-                        Streamline course management, and optimize your educational offerings with our advanced admin tools. Take control of your online learning platform today.
-                    </Typography>
-                    <Box sx={{ display: 'flex', gap: 3, justifyContent: 'center' }}>
-                        <Button
-                            variant="contained"
-                            size="large"
-                            onClick={() => navigate("/signup")}
-                            sx={{
-                                bgcolor: '#1976d2',
-                                '&:hover': { bgcolor: '#1565c0' },
-                                px: 4,
-                                py: 1.5,
-                                borderRadius: 2,
-                            }}
-                        >
-                            Get Started
-                        </Button>
-                        <Button
-                            variant="outlined"
-                            size="large"
-                            onClick={() => navigate("/signin")}
-                            sx={{
-                                borderColor: '#1976d2',
-                                color: '#1976d2',
-                                '&:hover': {
-                                    borderColor: '#1565c0',
-                                    bgcolor: 'rgba(25, 118, 210, 0.04)',
-                                },
-                                px: 4,
-                                py: 1.5,
-                                borderRadius: 2,
-                            }}
-                        >
-                            Sign In
-                        </Button>
-                    </Box>
-                </Box>
+            <Container maxWidth="lg">
+                <Typography variant="h2" component="h1" gutterBottom sx={{ 
+                    fontWeight: 700, 
+                    color: '#1976d2', // Dark blue color
+                    textAlign: 'center', 
+                    mb: 4,
+                }}>
+                    Welcome to Coursera
+                </Typography>
+                <Grid container spacing={3} justifyContent="center">
+                    {['Admin', 'User'].map((userType) => (
+                        <Grid item xs={12} md={6} key={userType}>
+                            <Paper elevation={2} sx={{ 
+                                p: 3, 
+                                height: '100%', 
+                                display: 'flex', 
+                                flexDirection: 'column', 
+                                justifyContent: 'space-between',
+                                borderRadius: '8px',
+                                backgroundColor: '#ffffff',
+                            }}>
+                                <Box>
+                                    <Typography variant="h5" gutterBottom sx={{ color: '#1976d2' }}>
+                                        {userType}
+                                    </Typography>
+                                    <Typography variant="body1" sx={{ mb: 2, color: '#333' }}>
+                                        {userType === 'Administrators' ? 
+                                            'Create and manage courses, oversee user enrollments, and optimize your educational offerings.'
+                                            : 'Explore and purchase a wide range of courses. Enhance your skills and knowledge today.'
+                                        }
+                                    </Typography>
+                                </Box>
+                                <Box sx={{ display: 'flex', gap: 2 }}>
+                                    <Button
+                                        variant="contained"
+                                        onClick={() => navigate(`/${userType.toLowerCase()}/signup`)}
+                                        sx={{
+                                            bgcolor: '#1976d2',
+                                            '&:hover': { bgcolor: '#1565c0' },
+                                            flex: 1,
+                                        }}
+                                    >
+                                        Sign Up
+                                    </Button>
+                                    <Button
+                                        variant="outlined"
+                                        onClick={() => navigate(`/${userType.toLowerCase()}/signin`)}
+                                        sx={{
+                                            borderColor: '#1976d2',
+                                            color: '#1976d2',
+                                            '&:hover': {
+                                                borderColor: '#1565c0',
+                                                bgcolor: 'rgba(25, 118, 210, 0.04)',
+                                            },
+                                            flex: 1,
+                                        }}
+                                    >
+                                        Sign In
+                                    </Button>
+                                </Box>
+                            </Paper>
+                        </Grid>
+                    ))}
+                </Grid>
             </Container>
         </Box>
     );

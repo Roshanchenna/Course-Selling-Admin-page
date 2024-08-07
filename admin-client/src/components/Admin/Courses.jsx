@@ -3,10 +3,10 @@ import AddIcon from '@mui/icons-material/Add';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { BASE_URL } from "../config.js";
+import { BASE_URL } from "../../config.js";
 import axios from "axios";
 import { useSetRecoilState } from "recoil";
-import { userState } from "../store/atoms/user.js";
+import { userState } from "../../store/atoms/user.js";
 
 function Courses() {
     const [courses, setCourses] = useState([]);
