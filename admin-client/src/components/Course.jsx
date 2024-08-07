@@ -1,22 +1,21 @@
-import { Card, Grid } from "@mui/material";
-import { useEffect, useState } from "react"
-import { useParams } from "react-router-dom";
-import { Typography, TextField, Button } from "@mui/material";
+import { Card, Grid, Typography, TextField, Button, Box, Container } from "@mui/material";
+import { useEffect, useState } from "react";
+import { useParams, useNavigate } from "react-router-dom";
 import axios from "axios";
-import {Loading} from "./Loading";
+import { Loading } from "./Loading";
 import { BASE_URL } from "../config.js";
+import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
 import { courseState } from "../store/atoms/course";
-import {useRecoilState, useRecoilValue, useSetRecoilState} from "recoil";
 import { courseTitle, coursePrice, isCourseLoading, courseImage } from "../store/selectors/course";
 
 function Course() {
     let { courseId } = useParams();
+    const navigate = useNavigate();
     const setCourse = useSetRecoilState(courseState);
     const courseLoading = useRecoilValue(isCourseLoading);
 
     useEffect(() => {
         axios.get(`${BASE_URL}/admin/course/${courseId}`, {
-            method: "GET",
             headers: {
                 "Authorization": "Bearer " + localStorage.getItem("token")
             }
@@ -29,154 +28,104 @@ function Course() {
     }, []);
 
     if (courseLoading) {
-        return <Loading />
+        return <Loading />;
     }
 
-    return <div>
-        <GrayTopper />
-        <Grid container>
-            <Grid item lg={8} md={12} sm={12}>
-                <UpdateCard />
-            </Grid>
-            <Grid item lg={4} md={12} sm={12}>
-                <CourseCard />
-            </Grid>
-        </Grid>
-    </div>
+    return (
+        <Box sx={{ 
+            bgcolor: '#f5f5f5', 
+            height: '100vh', 
+            display: 'flex', 
+            alignItems: 'center',
+            justifyContent: 'center'
+        }}>
+            <Container maxWidth="md">
+                <Card elevation={3} sx={{ p: 3 }}>
+                    <Typography variant="h4" gutterBottom align="center" sx={{ color: '#1976d2' }}>
+                        Edit Course
+                    </Typography>
+                    <Grid container spacing={3}>
+                        <Grid item xs={12} md={8}>
+                            <UpdateCard navigate={navigate} />
+                        </Grid>
+                        <Grid item xs={12} md={4}>
+                            <CourseCard />
+                        </Grid>
+                    </Grid>
+                </Card>
+            </Container>
+        </Box>
+    );
 }
 
-function GrayTopper() {
-    const title = useRecoilValue(courseTitle);
-    return <div style={{height: 250, background: "#212121", top: 0, width: "100vw", zIndex: 0, marginBottom: -250}}>
-        <div style={{ height: 250, display: "flex", justifyContent: "center", flexDirection: "column"}}>
-            <div>
-                <Typography style={{color: "white", fontWeight: 600}} variant="h3" textAlign={"center"}>
-                    {title}
-                </Typography>
-            </div>
-        </div>
-    </div>
-}
-
-function UpdateCard() {
+function UpdateCard({ navigate }) {
     const [courseDetails, setCourse] = useRecoilState(courseState);
-
     const [title, setTitle] = useState(courseDetails.course.title);
     const [description, setDescription] = useState(courseDetails.course.description);
     const [image, setImage] = useState(courseDetails.course.imageLink);
     const [price, setPrice] = useState(courseDetails.course.price);
 
-    return <div style={{display: "flex", justifyContent: "center"}}>
-    <Card varint={"outlined"} style={{maxWidth: 600, marginTop: 200}}>
-        <div style={{padding: 20}}>
-            <Typography style={{marginBottom: 10}}>Update course details</Typography>
-            <TextField
-                value={title}
-                style={{marginBottom: 10}}
-                onChange={(e) => {
-                    setTitle(e.target.value)
-                }}
-                fullWidth={true}
-                label="Title"
-                variant="outlined"
-            />
+    const handleUpdate = async () => {
+        try {
+            await axios.put(`${BASE_URL}/admin/courses/` + courseDetails.course._id, {
+                title, description, imageLink: image, published: true, price
+            }, {
+                headers: {
+                    "Content-type": "application/json",
+                    "Authorization": "Bearer " + localStorage.getItem("token")
+                }
+            });
+            navigate("/courses");
+        } catch (error) {
+            console.error("Failed to update course:", error);
+            alert("Failed to update course. Please try again.");
+        }
+    };
 
-            <TextField
-                value={description}
-                style={{marginBottom: 10}}
-                onChange={(e) => {
-                    setDescription(e.target.value)
-                }}
-                fullWidth={true}
-                label="Description"
-                variant="outlined"
-            />
-
-            <TextField
-                value={image}
-                style={{marginBottom: 10}}
-                onChange={(e) => {
-                    setImage(e.target.value)
-                }}
-                fullWidth={true}
-                label="Image link"
-                variant="outlined"
-            />
-            <TextField
-                value={price}
-                style={{marginBottom: 10}}
-                onChange={(e) => {
-                    setPrice(e.target.value)
-                }}
-                fullWidth={true}
-                label="Price"
-                variant="outlined"
-            />
-
-            <Button
-                variant="contained"
-                onClick={async () => {
-                    axios.put(`${BASE_URL}/admin/courses/` + courseDetails.course._id, {
-                        title: title,
-                        description: description,
-                        imageLink: image,
-                        published: true,
-                        price
-                    }, {
-                        headers: {
-                            "Content-type": "application/json",
-                            "Authorization": "Bearer " + localStorage.getItem("token")
-                        }
-                    });
-                    let updatedCourse = {
-                        _id: courseDetails.course._id,
-                        title: title,
-                        description: description,
-                        imageLink: image,
-                        price
-                    };
-                    setCourse({course: updatedCourse, isLoading: false});
-                }}
-            > Update course</Button>
-        </div>
-    </Card>
-</div>
+    return (
+        <Grid container spacing={2}>
+            <Grid item xs={12}>
+                <TextField fullWidth label="Title" variant="outlined" value={title} onChange={(e) => setTitle(e.target.value)} />
+            </Grid>
+            <Grid item xs={12}>
+                <TextField fullWidth label="Description" variant="outlined" multiline rows={2} value={description} onChange={(e) => setDescription(e.target.value)} />
+            </Grid>
+            <Grid item xs={12}>
+                <TextField fullWidth label="Image Link" variant="outlined" value={image} onChange={(e) => setImage(e.target.value)} />
+            </Grid>
+            <Grid item xs={12}>
+                <TextField fullWidth label="Price" variant="outlined" type="number" value={price} onChange={(e) => setPrice(e.target.value)} />
+            </Grid>
+            <Grid item xs={12}>
+                <Button variant="contained" color="primary" onClick={handleUpdate} fullWidth>
+                    Update Course
+                </Button>
+            </Grid>
+        </Grid>
+    );
 }
 
-function CourseCard(props) {
+function CourseCard() {
     const title = useRecoilValue(courseTitle);
     const imageLink = useRecoilValue(courseImage);
-
-    return <div style={{display: "flex",  marginTop: 50, justifyContent: "center", width: "100%"}}>
-     <Card style={{
-        margin: 10,
-        width: 350,
-        minHeight: 200,
-        borderRadius: 20,
-        marginRight: 50,
-        paddingBottom: 15,
-        zIndex: 2
-    }}>
-        <img src={imageLink} style={{width: 350}} ></img>
-        <div style={{marginLeft: 10}}>
-            <Typography variant="h5">{title}</Typography>
-            <Price />
-        </div>
-    </Card>
-    </div>
-}
-
-function Price() {
-
     const price = useRecoilValue(coursePrice);
-    return <>
-        <Typography variant="subtitle2" style={{color: "gray"}}>
-            Price
-        </Typography>
-        <Typography variant="subtitle1">
-            <b>Rs {price} </b>
-        </Typography>
-    </>
+
+    return (
+        <Box>
+            <Box sx={{ 
+                height: 150, 
+                backgroundImage: `url(${imageLink})`,
+                backgroundSize: 'cover',
+                backgroundPosition: 'center',
+                mb: 2,
+                borderRadius: 1
+            }} />
+            <Typography variant="h6" gutterBottom>{title}</Typography>
+            <Typography variant="subtitle1" color="text.secondary">
+                Price: ${price}
+            </Typography>
+        </Box>
+    );
 }
 
 export default Course;
