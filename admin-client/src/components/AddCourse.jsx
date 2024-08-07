@@ -90,7 +90,7 @@ function AddCourse() {
                                             }
                                         });
                                         alert("Course added successfully!");
-                                        // Optionally, clear the form or navigate to a different page
+                                        window.location.href = "/courses";
                                     } catch (error) {
                                         console.error("Failed to add course:", error);
                                         alert("Failed to add course. Please try again.");

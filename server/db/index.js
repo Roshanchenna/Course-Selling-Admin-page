@@ -7,8 +7,15 @@ const userSchema = new mongoose.Schema({
   });
   
 const adminSchema = new mongoose.Schema({
-    username: String,
-    password: String
+    username: {
+      type: String,
+      required: true,
+    },
+    password: {
+      type: String,
+      required: true,
+    },
+    createdCourses: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Course' }]
   });
   
 const courseSchema = new mongoose.Schema({
@@ -16,7 +23,8 @@ const courseSchema = new mongoose.Schema({
     description: String,
     price: Number,
     imageLink: String,
-    published: Boolean
+    published: Boolean,
+    creator: { type: mongoose.Schema.Types.ObjectId, ref: 'Admin', required: true }
   });
 
 const User = mongoose.model('User', userSchema);
