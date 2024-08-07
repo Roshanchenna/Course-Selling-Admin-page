@@ -17,21 +17,23 @@ import {useEffect} from "react";
 function App() {
     return (
         <RecoilRoot>
-            <div style={{width: "100vw",
+            <div style={{
+                width: "100%",
                 height: "100vh",
-                backgroundColor: "#eeeeee"}}
-            >
-                    <Router>
-                        <InitUser />
-                        <Routes>
-                            <Route path={"/addcourse"} element={<AddCourse />} />
-                            <Route path={"/course/:courseId"} element={<Course />} />
-                            <Route path={"/courses"} element={<Courses />} />
-                            <Route path={"/signin"} element={<Signin />} />
-                            <Route path={"/signup"} element={<Signup />} />
-                            <Route path={"/"} element={<Landing />} />
-                        </Routes>
-                    </Router>
+                backgroundColor: "#eeeeee",
+                overflowX: "hidden"
+            }}>
+                <Router>
+                    <InitUser />
+                    <Routes>
+                        <Route path={"/addcourse"} element={<AddCourse />} />
+                        <Route path={"/course/:courseId"} element={<Course />} />
+                        <Route path={"/courses"} element={<Courses />} />
+                        <Route path={"/signin"} element={<Signin />} />
+                        <Route path={"/signup"} element={<Signup />} />
+                        <Route path={"/"} element={<Landing />} />
+                    </Routes>
+                </Router>
             </div>
         </RecoilRoot>
     );

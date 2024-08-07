@@ -1,6 +1,6 @@
 import Button from '@mui/material/Button';
 import TextField from "@mui/material/TextField";
-import {Card, Typography} from "@mui/material";
+import {Card, Typography, Box, Container} from "@mui/material";
 import {useState} from "react";
 import axios from "axios";
 import {useNavigate} from "react-router-dom";
@@ -13,67 +13,73 @@ function Signin() {
     const navigate = useNavigate()
     const setUser = useSetRecoilState(userState);
 
-    return <div>
-            <div style={{
-                paddingTop: 150,
-                marginBottom: 10,
-                display: "flex",
-                justifyContent: "center"
-            }}>
-                <Typography variant={"h6"}>
-                Welcome to Coursera. Sign up below
+    return (
+        <Box sx={{
+            height: 'calc(100vh - 64px)',
+            width: '100%',
+            display: 'flex',
+            flexDirection: 'column',
+            justifyContent: 'center',
+            alignItems: 'center',
+            bgcolor: '#f0f4f8',
+        }}>
+            <Container maxWidth="sm">
+                <Typography variant="h4" component="h1" gutterBottom align="center" sx={{ mb: 4, color: '#1976d2' }}>
+                    Welcome to Coursera
                 </Typography>
-            </div>
-        <div style={{display: "flex", justifyContent: "center"}}>
-            <Card varint={"outlined"} style={{width: 400, padding: 20}}>
-                <TextField
-                    onChange={(evant11) => {
-                        let elemt = evant11.target;
-                        setEmail(elemt.value);
-                    }}
-                    fullWidth={true}
-                    label="Email"
-                    variant="outlined"
-                />
-                <br/><br/>
-                <TextField
-                    onChange={(e) => {
-                        setPassword(e.target.value);
-                    }}
-                    fullWidth={true}
-                    label="Password"
-                    variant="outlined"
-                    type={"password"}
-                />
-                <br/><br/>
-
-                <Button
-                    size={"large"}
-                    variant="contained"
-                    onClick={async () => {
-                        const res = await axios.post(`${BASE_URL}/admin/login`, {
-                            username: email,
-                            password: password
-                        }, {
-                            headers: {
-                                "Content-type": "application/json"
+                <Card variant="outlined" sx={{ p: 4 }}>
+                    <Typography variant="h6" gutterBottom align="center">
+                        Sign in below
+                    </Typography>
+                    <TextField
+                        fullWidth
+                        label="Email"
+                        variant="outlined"
+                        margin="normal"
+                        onChange={(event) => setEmail(event.target.value)}
+                    />
+                    <TextField
+                        fullWidth
+                        label="Password"
+                        variant="outlined"
+                        type="password"
+                        margin="normal"
+                        onChange={(event) => setPassword(event.target.value)}
+                    />
+                    <Button
+                        fullWidth
+                        size="large"
+                        variant="contained"
+                        sx={{ mt: 3 }}
+                        onClick={async () => {
+                            try {
+                                const res = await axios.post(`${BASE_URL}/admin/login`, {
+                                    username: email,
+                                    password: password
+                                }, {
+                                    headers: {
+                                        "Content-type": "application/json"
+                                    }
+                                });
+                                const data = res.data;
+                                localStorage.setItem("token", data.token);
+                                setUser({
+                                    userEmail: email,
+                                    isLoading: false
+                                });
+                                navigate("/courses");
+                            } catch (error) {
+                                console.error("Login failed:", error);
+                                // Handle login error (e.g., show an error message)
                             }
-                        });
-                        const data = res.data;
-
-                        localStorage.setItem("token", data.token);
-                        // window.location = "/"
-                        setUser({
-                            userEmail: email,
-                            isLoading: false
-                        })
-                        navigate("/courses")
-                    }}
-
-                > Signin</Button>
-            </Card>
-        </div>
-    </div>
+                        }}
+                    >
+                        Sign In
+                    </Button>
+                </Card>
+            </Container>
+        </Box>
+    );
 }
 
 export default Signin;
