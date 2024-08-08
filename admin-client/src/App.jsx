@@ -8,12 +8,13 @@ import Courses from "./components/Admin/Courses.jsx";
 import Course from "./components/Admin/Course.jsx";
 import {Landing} from "./components/Landing.jsx";
 import { userState } from "./store/atoms/user.js";
-import { RecoilRoot, useSetRecoilState } from 'recoil';
+import { RecoilRoot, useSetRecoilState, useRecoilValue } from 'recoil';
 import axios from "axios";
 import {BASE_URL} from "./config.js";
 import {useEffect} from "react";
 import AdminSidebar from "./components/Admin/AdminSidebar.jsx";
 import UserSidebar from "./components/User/UserSidebar.jsx";
+import UserCourses from "./components/User/UserCourses.jsx";
 
 function App() {
     return (
@@ -42,7 +43,7 @@ function App() {
                         {/* User routes */}
                         <Route path="/user" element={<UserLayout />}>
                             <Route index element={<UserDashboard />} />
-                            {/* Add more user routes as needed */}
+                            <Route path="courses" element={<UserCourses />} />
                         </Route>
                         <Route path="/user/signin" element={<UserSignin />} />
                         <Route path="/user/signup" element={<UserSignup />} />
@@ -56,7 +57,7 @@ function App() {
 function AdminLayout() {
     return (
         <div style={{ display: 'flex', height: '100vh' }}>
-            <AdminSidebar />
+            <AdminSidebar adminName={user.userEmail}/>
             <div style={{ flexGrow: 1, overflow: 'auto', padding: 0 }}>
                 <Outlet />
             </div>
@@ -68,7 +69,7 @@ function UserLayout() {
     const user = useRecoilValue(userState);
     return (
         <div style={{ display: 'flex' }}>
-            <UserSidebar adminName={user.userEmail}/>
+            <UserSidebar/>
             <div style={{ flexGrow: 1, padding: '20px' }}>
                 <Outlet />
             </div>

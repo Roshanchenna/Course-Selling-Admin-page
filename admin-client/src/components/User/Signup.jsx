@@ -18,14 +18,14 @@ function Signup() {
     const handleSignup = async () => {
         try {
             setError(""); // Clear any previous errors
-            const response = await axios.post(`${BASE_URL}/admin/signup`, {
+            const response = await axios.post(`${BASE_URL}/user/signup`, {
                 username: email,
                 password: password
             });
             const data = response.data;
             localStorage.setItem("token", data.token);
             setUser({userEmail: email, isLoading: false});
-            navigate("/signin");
+            navigate("/user/signin");
         } catch (error) {
             console.error("Signup error:", error);
             if (error.response) {

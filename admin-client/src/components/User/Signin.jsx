@@ -18,7 +18,7 @@ function Signin() {
     const handleSignin = async () => {
         try {
             setError(""); // Clear any previous errors
-            const response = await axios.post(`${BASE_URL}/admin/login`, {
+            const response = await axios.post(`${BASE_URL}/user/login`, {
                 username: email,
                 password: password
             }, {
@@ -32,7 +32,7 @@ function Signin() {
                 userEmail: email,
                 isLoading: false
             });
-            navigate("/courses");
+            navigate("/user/courses");
         } catch (error) {
             console.error("Login error:", error);
             if (error.response) {
