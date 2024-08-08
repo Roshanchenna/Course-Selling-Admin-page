@@ -39,7 +39,7 @@ export const Landing = () => {
                                         {userType}
                                     </Typography>
                                     <Typography variant="body1" sx={{ mb: 2, color: '#333' }}>
-                                        {userType === 'Administrators' ? 
+                                        {userType === 'Admin' ? 
                                             'Create and manage courses, oversee user enrollments, and optimize your educational offerings.'
                                             : 'Explore and purchase a wide range of courses. Enhance your skills and knowledge today.'
                                         }

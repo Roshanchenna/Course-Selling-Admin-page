@@ -32,7 +32,7 @@ function Signin() {
                 userEmail: email,
                 isLoading: false
             });
-            navigate("/admin/courses");
+            navigate("/courses");
         } catch (error) {
             console.error("Login error:", error);
             if (error.response) {

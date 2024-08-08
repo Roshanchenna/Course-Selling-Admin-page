@@ -1,6 +1,7 @@
-import { Button, Card, Typography, Box, Grid, CardContent, CardMedia, AppBar, Toolbar, IconButton } from "@mui/material";
+import { Button, Card, Typography, Box, Container, Grid, CardContent, CardMedia, AppBar, Toolbar, IconButton } from "@mui/material";
 import AddIcon from '@mui/icons-material/Add';
 import DeleteIcon from '@mui/icons-material/Delete';
+import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { BASE_URL } from "../../config.js";
@@ -43,21 +44,21 @@ function Courses() {
                     Authorization: `Bearer ${localStorage.getItem('token')}`
                 }
             });
-            // Remove the deleted course from the state
             setCourses(courses.filter(course => course._id !== courseId));
         } catch (error) {
             console.error("Failed to delete course:", error);
-            // Optionally, show an error message to the user
         }
     };
 
     return (
         <Box sx={{ 
-            bgcolor: '#f5f5f5', 
-            minHeight: '100vh', 
             display: 'flex', 
             flexDirection: 'column',
-            overflow: 'hidden'
+            height: '100vh',
+            width: '100vw',
+            overflow: 'hidden',
+            margin: 0,
+            padding: 0,
         }}>
             <AppBar position="static">
                 <Toolbar>
@@ -67,7 +68,7 @@ function Courses() {
                     <Button 
                         color="inherit" 
                         startIcon={<AddIcon />} 
-                        onClick={() => navigate('/addCourse')}
+                        onClick={() => navigate('/admin/addCourse')}
                         sx={{ mr: 2 }}
                     >
                         Add Course
@@ -75,9 +76,15 @@ function Courses() {
                     <Button color="inherit" onClick={handleLogout}>Logout</Button>
                 </Toolbar>
             </AppBar>
-            <Box sx={{ flexGrow: 1, overflow: 'auto', p: 3 }}>
+            <Box sx={{ 
+                flexGrow: 1, 
+                overflow: 'auto', 
+                bgcolor: '#f5f5f5',
+                p: 2,
+                boxSizing: 'border-box',
+            }}>
                 {courses.length > 0 ? (
-                    <Grid container spacing={3}>
+                    <Grid container spacing={2}>
                         {courses.map(course => (
                             <Grid item xs={12} sm={6} md={4} key={course._id}>
                                 <CourseCard 
@@ -109,7 +116,7 @@ function Courses() {
                             variant="contained" 
                             color="primary" 
                             startIcon={<AddIcon />}
-                            onClick={() => navigate('admi/addCourse')}
+                            onClick={() => navigate('/admin/addCourse')}
                             size="large"
                         >
                             Create Your First Course

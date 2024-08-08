@@ -1,18 +1,19 @@
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import Signin from "./components/admin/Signin.jsx";
-import Signup from "./components/admin/Signup.jsx";
+import { BrowserRouter as Router, Routes, Route, Outlet } from 'react-router-dom';
+import AdminSignin from "./components/admin/Signin.jsx";
+import AdminSignup from "./components/admin/Signup.jsx";
+import UserSignin from "./components/user/Signin.jsx";
+import UserSignup from "./components/user/Signup.jsx";
 import AddCourse from "./components/Admin/AddCourse.jsx";
 import Courses from "./components/Admin/Courses.jsx";
 import Course from "./components/Admin/Course.jsx";
 import {Landing} from "./components/Landing.jsx";
 import { userState } from "./store/atoms/user.js";
-import {
-    RecoilRoot,
-    useSetRecoilState
-} from 'recoil';
+import { RecoilRoot, useSetRecoilState } from 'recoil';
 import axios from "axios";
 import {BASE_URL} from "./config.js";
 import {useEffect} from "react";
+import AdminSidebar from "./components/Admin/AdminSidebar.jsx";
+import UserSidebar from "./components/User/UserSidebar.jsx";
 
 function App() {
     return (
@@ -26,12 +27,25 @@ function App() {
                 <Router>
                     <InitUser />
                     <Routes>
-                        <Route path={"/Admin/addcourse"} element={<AddCourse />} />
-                        <Route path={"/Admin/course/:courseId"} element={<Course />} />
-                        <Route path={"/Admin/courses"} element={<Courses />} />
-                        <Route path={"/Admin/signin"} element={<Signin />} />
-                        <Route path={"/Admin/signup"} element={<Signup />} />
-                        <Route path={"/"} element={<Landing />} />
+                        <Route path="/" element={<Landing />} />
+                        
+                        {/* Admin routes */}
+                        <Route path="/admin" element={<AdminLayout />}>
+                            <Route index element={<AdminDashboard />} />
+                            <Route path="addcourse" element={<AddCourse />} />
+                            <Route path="courses" element={<Courses />} />
+                            <Route path="course/:courseId" element={<Course />} />
+                        </Route>
+                        <Route path="/admin/signin" element={<AdminSignin />} />
+                        <Route path="/admin/signup" element={<AdminSignup />} />
+                        
+                        {/* User routes */}
+                        <Route path="/user" element={<UserLayout />}>
+                            <Route index element={<UserDashboard />} />
+                            {/* Add more user routes as needed */}
+                        </Route>
+                        <Route path="/user/signin" element={<UserSignin />} />
+                        <Route path="/user/signup" element={<UserSignup />} />
                     </Routes>
                 </Router>
             </div>
@@ -39,6 +53,35 @@ function App() {
     );
 }
 
+function AdminLayout() {
+    return (
+        <div style={{ display: 'flex', height: '100vh' }}>
+            <AdminSidebar />
+            <div style={{ flexGrow: 1, overflow: 'auto', padding: 0 }}>
+                <Outlet />
+            </div>
+        </div>
+    );
+}
+
+function UserLayout() {
+    return (
+        <div style={{ display: 'flex' }}>
+            <UserSidebar />
+            <div style={{ flexGrow: 1, padding: '20px' }}>
+                <Outlet />
+            </div>
+        </div>
+    );
+}
+
+function AdminDashboard() {
+    return <h1>Admin Dashboard</h1>;
+}
+
+function UserDashboard() {
+    return <h1>User Dashboard</h1>;
+}
 
 function InitUser() {
     const setUser = useSetRecoilState(userState);

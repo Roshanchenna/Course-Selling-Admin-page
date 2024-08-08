@@ -2,7 +2,7 @@ import { Card, Grid, Typography, TextField, Button, Box, Container } from "@mui/
 import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import axios from "axios";
-import { Loading } from "../Loading.jsx";
+import { Loading } from "../../constants/Loading.jsx";
 import { BASE_URL } from "../../config.js";
 import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
 import { courseState } from "../../store/atoms/course.js";
