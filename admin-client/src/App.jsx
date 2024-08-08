@@ -55,6 +55,7 @@ function App() {
 }
 
 function AdminLayout() {
+    const user = useRecoilValue(userState);
     return (
         <div style={{ display: 'flex', height: '100vh' }}>
             <AdminSidebar adminName={user.userEmail}/>

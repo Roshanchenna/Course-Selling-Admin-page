@@ -7,6 +7,7 @@ import {
   Card,
   CardContent,
   CardActions,
+  CardMedia,
   Button,
   Box,
   CircularProgress,
@@ -15,28 +16,28 @@ import {
 } from '@mui/material';
 
 const UserCourses = () => {
-  const [adminCourses, setAdminCourses] = useState([]);
+  const [allCourses, setAllCourses] = useState([]);
   const [purchasedCourses, setPurchasedCourses] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    fetchAdminCourses();
+    fetchAllCourses();
     fetchPurchasedCourses();
   }, []);
 
-  const fetchAdminCourses = async () => {
+  const fetchAllCourses = async () => {
     try {
       const response = await axios.get(`${BASE_URL}/courses`, {
         headers: {
           "Authorization": "Bearer " + localStorage.getItem("token")
         }
       });
-      setAdminCourses(response.data.courses);
+      setAllCourses(response.data.courses);
       setLoading(false);
     } catch (error) {
-      console.error('Error fetching admin courses:', error);
-      setError('Failed to fetch available courses');
+      console.error('Error fetching courses:', error);
+      setError('Failed to fetch courses');
       setLoading(false);
     }
   };
@@ -63,7 +64,7 @@ const UserCourses = () => {
         }
       });
       // Refresh the lists after purchase
-      fetchAdminCourses();
+      fetchAllCourses();
       fetchPurchasedCourses();
     } catch (error) {
       console.error('Error purchasing course:', error);
@@ -82,29 +83,42 @@ const UserCourses = () => {
   return (
     <Box sx={{ flexGrow: 1, p: 3 }}>
       <Typography variant="h4" gutterBottom>
-        User Courses
+        All Courses
       </Typography>
 
-      <Typography variant="h5" gutterBottom>
-        Available Courses
-      </Typography>
       <Grid container spacing={3}>
-        {adminCourses.length === 0 ? (
+        {allCourses.length === 0 ? (
           <Grid item xs={12}>
-            <Typography>No available courses</Typography>
+            <Typography>No courses available</Typography>
           </Grid>
         ) : (
-          adminCourses.map(course => (
+          allCourses.map(course => (
             <Grid item xs={12} sm={6} md={4} key={course._id}>
               <Card>
+                <CardMedia
+                  component="img"
+                  height="140"
+                  image={course.imageLink || 'https://via.placeholder.com/300x140?text=Course+Image'}
+                  alt={course.title}
+                />
                 <CardContent>
                   <Typography variant="h6">{course.title}</Typography>
                   <Typography variant="body2" color="text.secondary">
                     {course.description}
                   </Typography>
+                  <Typography variant="body2" color="text.secondary">
+                    Created by: {course.creator ? course.creator.username : 'Unknown'}
+                  </Typography>
+                  <Typography variant="h6" color="primary" sx={{ mt: 2 }}>
+                    ${course.price}
+                  </Typography>
                 </CardContent>
                 <CardActions>
-                  <Button size="small" onClick={() => handlePurchase(course._id)}>Purchase</Button>
+                  {purchasedCourses.some(pc => pc._id === course._id) ? (
+                    <Button size="small" disabled>Purchased</Button>
+                  ) : (
+                    <Button size="small" onClick={() => handlePurchase(course._id)}>Purchase</Button>
+                  )}
                 </CardActions>
               </Card>
             </Grid>
@@ -112,7 +126,7 @@ const UserCourses = () => {
         )}
       </Grid>
 
-      <Typography variant="h5" gutterBottom sx={{ mt: 4 }}>
+      <Typography variant="h4" gutterBottom sx={{ mt: 4 }}>
         Purchased Courses
       </Typography>
       <Grid container spacing={3}>
@@ -124,6 +138,12 @@ const UserCourses = () => {
           purchasedCourses.map(course => (
             <Grid item xs={12} sm={6} md={4} key={course._id}>
               <Card>
+                <CardMedia
+                  component="img"
+                  height="140"
+                  image={course.imageLink || 'https://via.placeholder.com/300x140?text=Course+Image'}
+                  alt={course.title}
+                />
                 <CardContent>
                   <Typography variant="h6">{course.title}</Typography>
                   <Typography variant="body2" color="text.secondary">
