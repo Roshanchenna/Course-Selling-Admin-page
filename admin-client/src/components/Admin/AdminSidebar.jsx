@@ -8,11 +8,11 @@ import SettingsIcon from '@mui/icons-material/Settings';
 
 const drawerWidth = 240;
 
-const AdminSidebar = () => {
+const AdminSidebar = ({ adminName }) => {
   const location = useLocation();
 
   const menuItems = [
-    { text: 'Dashboard', icon: <DashboardIcon />, path: '/admin/Dashboard' },
+    { text: 'Dashboard', icon: <DashboardIcon />, path: '/admin' },
     { text: 'Courses', icon: <SchoolIcon />, path: '/admin/courses' },
     { text: 'Add Course', icon: <AddCircleOutlineIcon />, path: '/admin/addCourse' },
     { text: 'Settings', icon: <SettingsIcon />, path: '/admin/settings' },
@@ -34,7 +34,7 @@ const AdminSidebar = () => {
     >
       <Box sx={{ p: 2 }}>
         <Typography variant="h6" sx={{ fontWeight: 'bold', color: '#333' }}>
-          Admin Panel
+          {adminName || 'Admin'}
         </Typography>
       </Box>
       <List>

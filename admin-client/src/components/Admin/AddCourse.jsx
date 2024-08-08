@@ -90,7 +90,7 @@ function AddCourse() {
                                             }
                                         });
                                         alert("Course added successfully!");
-                                        window.location.href = "/courses";
+                                        window.location.href = "/admin/courses";
                                     } catch (error) {
                                         console.error("Failed to add course:", error);
                                         alert("Failed to add course. Please try again.");

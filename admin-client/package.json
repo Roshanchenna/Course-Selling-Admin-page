@@ -7,7 +7,10 @@
     "dev": "vite",
     "build": "vite build",
     "lint": "eslint src --ext js,jsx --report-unused-disable-directives --max-warnings 0",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "frontend": "npm run dev" ,
+    "backend": "node ../server/index.js",
+    "start": "concurrently \"npm run frontend\" \"npm run backend\""
   },
   "dependencies": {
     "@emotion/react": "^11.13.0",

@@ -65,9 +65,10 @@ function AdminLayout() {
 }
 
 function UserLayout() {
+    const user = useRecoilValue(userState);
     return (
         <div style={{ display: 'flex' }}>
-            <UserSidebar />
+            <UserSidebar adminName={user.userEmail}/>
             <div style={{ flexGrow: 1, padding: '20px' }}>
                 <Outlet />
             </div>

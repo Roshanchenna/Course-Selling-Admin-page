@@ -67,7 +67,7 @@ function Courses() {
                     <Button 
                         color="inherit" 
                         startIcon={<AddIcon />} 
-                        onClick={() => navigate('/addCourse')}
+                        onClick={() => navigate('/admin/addCourse')}
                         sx={{ mr: 2 }}
                     >
                         Add Course
@@ -109,7 +109,7 @@ function Courses() {
                             variant="contained" 
                             color="primary" 
                             startIcon={<AddIcon />}
-                            onClick={() => navigate('admi/addCourse')}
+                            onClick={() => navigate('/admin/addCourse')}
                             size="large"
                         >
                             Create Your First Course
@@ -166,7 +166,7 @@ function CourseCard({ course, navigate, onDelete }) {
             <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', px: 2, pb: 2 }}>
                 <Button 
                     size="small" 
-                    onClick={() => navigate(`/course/${course._id}`)}
+                    onClick={() => navigate(`/admin/course/${course._id}`)}
                     sx={{ 
                         '&:hover': {
                             backgroundColor: 'rgba(0, 0, 0, 0.08)',

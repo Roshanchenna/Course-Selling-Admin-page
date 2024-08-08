@@ -1,4 +1,4 @@
-import { Card, Grid, Typography, TextField, Button, Box, Container } from "@mui/material";
+import { Card, Grid, Typography, TextField, Button, Box, Container, CardMedia } from "@mui/material";
 import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import axios from "axios";
@@ -34,21 +34,21 @@ function Course() {
     return (
         <Box sx={{ 
             bgcolor: '#f5f5f5', 
-            height: '100vh', 
-            display: 'flex', 
-            alignItems: 'center',
-            justifyContent: 'center'
+            minHeight: '100vh', 
+            py: 4
         }}>
-            <Container maxWidth="md">
-                <Card elevation={3} sx={{ p: 3 }}>
-                    <Typography variant="h4" gutterBottom align="center" sx={{ color: '#1976d2' }}>
-                        Edit Course
-                    </Typography>
-                    <Grid container spacing={3}>
-                        <Grid item xs={12} md={8}>
-                            <UpdateCard navigate={navigate} />
+            <Container maxWidth="lg">
+                <Card elevation={3} sx={{ borderRadius: 2, overflow: 'hidden' }}>
+                    <Grid container>
+                        <Grid item xs={12} md={6}>
+                            <Box sx={{ p: 4 }}>
+                                <Typography variant="h4" gutterBottom sx={{ fontWeight: 'bold', color: '#1976d2' }}>
+                                    Edit Course
+                                </Typography>
+                                <UpdateCard navigate={navigate} />
+                            </Box>
                         </Grid>
-                        <Grid item xs={12} md={4}>
+                        <Grid item xs={12} md={6}>
                             <CourseCard />
                         </Grid>
                     </Grid>
@@ -75,7 +75,7 @@ function UpdateCard({ navigate }) {
                     "Authorization": "Bearer " + localStorage.getItem("token")
                 }
             });
-            navigate("/courses");
+            navigate("/admin/courses");
         } catch (error) {
             console.error("Failed to update course:", error);
             alert("Failed to update course. Please try again.");
@@ -83,12 +83,12 @@ function UpdateCard({ navigate }) {
     };
 
     return (
-        <Grid container spacing={2}>
+        <Grid container spacing={3}>
             <Grid item xs={12}>
                 <TextField fullWidth label="Title" variant="outlined" value={title} onChange={(e) => setTitle(e.target.value)} />
             </Grid>
             <Grid item xs={12}>
-                <TextField fullWidth label="Description" variant="outlined" multiline rows={2} value={description} onChange={(e) => setDescription(e.target.value)} />
+                <TextField fullWidth label="Description" variant="outlined" multiline rows={4} value={description} onChange={(e) => setDescription(e.target.value)} />
             </Grid>
             <Grid item xs={12}>
                 <TextField fullWidth label="Image Link" variant="outlined" value={image} onChange={(e) => setImage(e.target.value)} />
@@ -97,7 +97,7 @@ function UpdateCard({ navigate }) {
                 <TextField fullWidth label="Price" variant="outlined" type="number" value={price} onChange={(e) => setPrice(e.target.value)} />
             </Grid>
             <Grid item xs={12}>
-                <Button variant="contained" color="primary" onClick={handleUpdate} fullWidth>
+                <Button variant="contained" color="primary" onClick={handleUpdate} fullWidth sx={{ py: 1.5 }}>
                     Update Course
                 </Button>
             </Grid>
@@ -111,19 +111,25 @@ function CourseCard() {
     const price = useRecoilValue(coursePrice);
 
     return (
-        <Box>
-            <Box sx={{ 
-                height: 150, 
-                backgroundImage: `url(${imageLink})`,
-                backgroundSize: 'cover',
-                backgroundPosition: 'center',
-                mb: 2,
-                borderRadius: 1
-            }} />
-            <Typography variant="h6" gutterBottom>{title}</Typography>
-            <Typography variant="subtitle1" color="text.secondary">
-                Price: ${price}
-            </Typography>
+        <Box sx={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
+            <CardMedia
+                component="img"
+                image={imageLink}
+                alt={title}
+                sx={{ 
+                    height: 300, 
+                    objectFit: 'cover'
+                }}
+            />
+            <Box sx={{ p: 4, flexGrow: 1, display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
+                <Typography variant="h5" gutterBottom sx={{ fontWeight: 'bold' }}>{title}</Typography>
+                <Typography variant="h6" color="text.secondary" sx={{ mb: 2 }}>
+                    Price: ${price}
+                </Typography>
+                {/* <Typography variant="body1" color="text.secondary">
+                    This is how your course will appear to users. The image, title, and price are displayed prominently to attract potential students.
+                </Typography> */}
+            </Box>
         </Box>
     );
 }
