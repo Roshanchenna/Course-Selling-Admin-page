@@ -3,6 +3,7 @@ const mongoose = require('mongoose');
 const cors = require('cors');
 const adminRouter = require("./routes/admin");
 const userRouter = require("./routes/user");
+const { authenticateJwt, SECRET } = require("./middleware/auth");
 
 const app = express();
 

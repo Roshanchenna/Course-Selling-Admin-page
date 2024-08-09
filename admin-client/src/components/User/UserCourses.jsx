@@ -20,6 +20,7 @@ const UserCourses = () => {
   const [purchasedCourses, setPurchasedCourses] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [success, setSuccess] = useState(null);
 
   useEffect(() => {
     fetchAllCourses();
@@ -28,7 +29,7 @@ const UserCourses = () => {
 
   const fetchAllCourses = async () => {
     try {
-      const response = await axios.get(`${BASE_URL}/courses`, {
+      const response = await axios.get(`${BASE_URL}/user/courses`, {
         headers: {
           "Authorization": "Bearer " + localStorage.getItem("token")
         }
@@ -44,7 +45,7 @@ const UserCourses = () => {
 
   const fetchPurchasedCourses = async () => {
     try {
-      const response = await axios.get(`${BASE_URL}/users/purchasedCourses`, {
+      const response = await axios.get(`${BASE_URL}/user/purchasedCourses`, {
         headers: {
           "Authorization": "Bearer " + localStorage.getItem("token")
         }
@@ -58,13 +59,12 @@ const UserCourses = () => {
 
   const handlePurchase = async (courseId) => {
     try {
-      await axios.post(`${BASE_URL}/users/courses/${courseId}`, {}, {
+      await axios.post(`${BASE_URL}/user/courses/${courseId}`, {}, {
         headers: {
           "Authorization": "Bearer " + localStorage.getItem("token")
         }
       });
-      // Refresh the lists after purchase
-      fetchAllCourses();
+      setSuccess('Course purchased successfully!');
       fetchPurchasedCourses();
     } catch (error) {
       console.error('Error purchasing course:', error);
@@ -162,6 +162,11 @@ const UserCourses = () => {
       <Snackbar open={!!error} autoHideDuration={6000} onClose={() => setError(null)}>
         <Alert onClose={() => setError(null)} severity="error" sx={{ width: '100%' }}>
           {error}
+        </Alert>
+      </Snackbar>
+      <Snackbar open={!!success} autoHideDuration={6000} onClose={() => setSuccess(null)}>
+        <Alert onClose={() => setSuccess(null)} severity="success" sx={{ width: '100%' }}>
+          {success}
         </Alert>
       </Snackbar>
     </Box>

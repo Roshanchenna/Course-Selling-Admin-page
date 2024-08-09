@@ -40,32 +40,66 @@ router.post('/signup', (req, res) => {
     const { username, password } = req.body;
     const admin = await Admin.findOne({ username, password });
     if (admin) {
-      const token = jwt.sign({ username, role: 'admin' }, SECRET, { expiresIn: '1h' });
+      const token = jwt.sign({ id: admin._id, username: admin.username }, SECRET, { expiresIn: '1h' });
       res.json({ message: 'Logged in successfully', token });
     } else {
       res.status(403).json({ message: 'Invalid username or password' });
     }
   });
   
+  router.get('/courses', authenticateJwt, async (req, res) => {
+    try {
+      const courses = await Course.find({ creator: req.user.id });
+      res.json({ courses });
+    } catch (error) {
+      res.status(500).json({ message: 'Error fetching courses', error: error.message });
+    }
+  });
+  
   router.post('/courses', authenticateJwt, async (req, res) => {
     try {
-      const admin = await Admin.findOne({ username: req.user.username });
-      if (!admin) {
-        return res.status(403).json({ message: 'Admin not found' });
-      }
+        console.log("Received request body:", JSON.stringify(req.body, null, 2));
+        console.log("Authenticated user:", JSON.stringify(req.user, null, 2));
 
-      const course = new Course({
-        ...req.body,
-        creator: admin._id
-      });
-      await course.save();
+        const { title, description, price, imageLink, published } = req.body;
+        
+        if (!req.user) {
+            console.log("req.user is undefined");
+            return res.status(400).json({ message: 'User information is missing' });
+        }
 
-      admin.createdCourses.push(course._id);
-      await admin.save();
+        if (!req.user.id) {
+            console.log("req.user.id is undefined. req.user:", req.user);
+            return res.status(400).json({ message: 'User ID is missing' });
+        }
 
-      res.json({ message: 'Course created successfully', courseId: course.id });
+        if (!title || !description || !price || !imageLink) {
+            console.log("Missing required fields");
+            return res.status(400).json({ message: 'Missing required fields', missingFields: { title: !title, description: !description, price: !price, imageLink: !imageLink } });
+        }
+
+        const course = new Course({
+            title,
+            description,
+            price,
+            imageLink,
+            published,
+            creator: req.user.id
+        });
+
+        console.log("Course object before save:", JSON.stringify(course, null, 2));
+
+        const savedCourse = await course.save();
+        console.log("Saved course:", JSON.stringify(savedCourse, null, 2));
+
+        res.json({ message: 'Course created successfully', courseId: savedCourse.id });
     } catch (error) {
-      res.status(500).json({ message: 'Error creating course', error: error.message });
+        console.error('Error creating course:', error);
+        if (error.name === 'ValidationError') {
+            const validationErrors = Object.values(error.errors).map(err => err.message);
+            return res.status(400).json({ message: 'Validation error', errors: validationErrors });
+        }
+        res.status(500).json({ message: 'Error creating course', error: error.message, stack: error.stack });
     }
   });
   
