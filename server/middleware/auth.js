@@ -10,7 +10,6 @@ const authenticateJwt = (req, res, next) => {
                 console.log("JWT verification failed:", err);
                 return res.sendStatus(403);
             }
-            console.log("Decoded JWT:", user);
             req.user = user;
             next();
         });

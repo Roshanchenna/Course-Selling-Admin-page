@@ -4,10 +4,10 @@ import { useNavigate } from 'react-router-dom';
 import DashboardIcon from '@mui/icons-material/Dashboard';
 import SchoolIcon from '@mui/icons-material/School';
 import ExitToAppIcon from '@mui/icons-material/ExitToApp';
-import { useSetRecoilState } from 'recoil';
+import { useRecoilValue, useSetRecoilState } from 'recoil';
 import { userState } from '../../store/atoms/user.js';
 
-function UserSidebar() {
+function UserSidebar({userName}) {
     const navigate = useNavigate();
     const setUser = useSetRecoilState(userState);
 
@@ -33,15 +33,15 @@ function UserSidebar() {
         >
             <Box sx={{ p: 2 }}>
                 <Typography variant="h6" noWrap component="div">
-                    User Dashboard
+                    {userName ? userName.toUpperCase() : 'user' }
                 </Typography>
             </Box>
             <List>
-                <ListItem button onClick={() => navigate('/user/dashboard')}>
+                <ListItem button onClick={() => navigate('/user/PurchasedCourses')}>
                     <ListItemIcon>
                         <DashboardIcon />
                     </ListItemIcon>
-                    <ListItemText primary="Dashboard" />
+                    <ListItemText primary="Purchased" />
                 </ListItem>
                 <ListItem button onClick={() => navigate('/user/courses')}>
                     <ListItemIcon>
@@ -50,16 +50,6 @@ function UserSidebar() {
                     <ListItemText primary="Courses" />
                 </ListItem>
             </List>
-            <Box sx={{ position: 'absolute', bottom: 0, left: 0, right: 0, p: 2 }}>
-                <Button
-                    fullWidth
-                    variant="outlined"
-                    startIcon={<ExitToAppIcon />}
-                    onClick={handleLogout}
-                >
-                    Logout
-                </Button>
-            </Box>
         </Box>
     );
 }

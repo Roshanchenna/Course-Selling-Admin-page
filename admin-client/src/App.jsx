@@ -15,6 +15,7 @@ import {useEffect} from "react";
 import AdminSidebar from "./components/Admin/AdminSidebar.jsx";
 import UserSidebar from "./components/User/UserSidebar.jsx";
 import UserCourses from "./components/User/UserCourses.jsx";
+import PurchasedCourses from "./components/User/PurchasedCourses.jsx"
 
 function App() {
     return (
@@ -44,6 +45,7 @@ function App() {
                         <Route path="/user" element={<UserLayout />}>
                             <Route index element={<UserDashboard />} />
                             <Route path="courses" element={<UserCourses />} />
+                            <Route path="purchasedCourses" element={<PurchasedCourses />} />
                         </Route>
                         <Route path="/user/signin" element={<UserSignin />} />
                         <Route path="/user/signup" element={<UserSignup />} />
@@ -70,8 +72,8 @@ function UserLayout() {
     const user = useRecoilValue(userState);
     return (
         <div style={{ display: 'flex' }}>
-            <UserSidebar/>
-            <div style={{ flexGrow: 1, padding: '20px' }}>
+            <UserSidebar userName = {user.userEmail}/>
+            <div style={{ flexGrow: 1, overflow: 'auto', padding: 0 }}>
                 <Outlet />
             </div>
         </div>

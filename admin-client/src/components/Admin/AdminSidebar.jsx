@@ -12,10 +12,8 @@ const AdminSidebar = ({ adminName }) => {
   const location = useLocation();
 
   const menuItems = [
-    { text: 'Dashboard', icon: <DashboardIcon />, path: '/admin' },
     { text: 'Courses', icon: <SchoolIcon />, path: '/admin/courses' },
     { text: 'Add Course', icon: <AddCircleOutlineIcon />, path: '/admin/addCourse' },
-    { text: 'Settings', icon: <SettingsIcon />, path: '/admin/settings' },
   ];
 
   return (
@@ -34,7 +32,7 @@ const AdminSidebar = ({ adminName }) => {
     >
       <Box sx={{ p: 2 }}>
         <Typography variant="h6" sx={{ fontWeight: 'bold', color: '#333' }}>
-          {adminName || 'Admin'}
+          {adminName.toUpperCase() || 'Admin'}
         </Typography>
       </Box>
       <List>

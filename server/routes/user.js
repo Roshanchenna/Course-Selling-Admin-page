@@ -54,11 +54,12 @@ router.post('/signup', async (req, res) => {
   });
   
   router.get('/purchasedCourses', authenticateJwt, async (req, res) => {
-    const user = await User.findById(req.user.id).populate('purchasedCourses');
+    console.log('Authenticated user:', req.user);
+    const user = await User.findOne(req.user)
     if (user) {
       res.json({ purchasedCourses: user.purchasedCourses || [] });
     } else {
-      res.status(403).json({ message: 'User not found' });
+      res.status(404).json({ message: 'User not found' });
     }
   });
   

@@ -12,7 +12,9 @@ import {
   Box,
   CircularProgress,
   Snackbar,
-  Alert
+  Alert,
+  AppBar,
+  Toolbar,
 } from '@mui/material';
 
 const UserCourses = () => {
@@ -31,8 +33,8 @@ const UserCourses = () => {
     try {
       const response = await axios.get(`${BASE_URL}/user/courses`, {
         headers: {
-          "Authorization": "Bearer " + localStorage.getItem("token")
-        }
+          Authorization: "Bearer " + localStorage.getItem("token"),
+        },
       });
       setAllCourses(response.data.courses);
       setLoading(false);
@@ -47,9 +49,10 @@ const UserCourses = () => {
     try {
       const response = await axios.get(`${BASE_URL}/user/purchasedCourses`, {
         headers: {
-          "Authorization": "Bearer " + localStorage.getItem("token")
-        }
+          authorization: "Bearer " + localStorage.getItem("token"),
+        },
       });
+      
       setPurchasedCourses(response.data.purchasedCourses);
     } catch (error) {
       console.error('Error fetching purchased courses:', error);
@@ -59,17 +62,23 @@ const UserCourses = () => {
 
   const handlePurchase = async (courseId) => {
     try {
-      await axios.post(`${BASE_URL}/user/courses/${courseId}`, {}, {
+      const response = await axios.post(`${BASE_URL}/user/courses/${courseId}`, {}, {
         headers: {
-          "Authorization": "Bearer " + localStorage.getItem("token")
-        }
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
       });
+      console.log('Response:', response);
       setSuccess('Course purchased successfully!');
       fetchPurchasedCourses();
     } catch (error) {
-      console.error('Error purchasing course:', error);
+      console.error('Error purchasing course:', error.response?.data || error.message);
       setError('Failed to purchase course');
     }
+  };
+  
+  const handleLogout = () => {
+    localStorage.removeItem('token');
+    window.location = "/";
   };
 
   if (loading) {
@@ -81,18 +90,23 @@ const UserCourses = () => {
   }
 
   return (
-    <Box sx={{ flexGrow: 1, p: 3 }}>
-      <Typography variant="h4" gutterBottom>
-        All Courses
-      </Typography>
+    <Box sx={{ flexGrow: 1, p: 0 }}>
+      <AppBar position="static">
+        <Toolbar>
+          <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
+            Courses
+          </Typography>
+          <Button color="inherit" onClick={handleLogout}>Logout</Button>
+        </Toolbar>
+      </AppBar>
 
-      <Grid container spacing={3}>
+      <Grid container spacing={3} sx={{ p: 3 }}>
         {allCourses.length === 0 ? (
           <Grid item xs={12}>
             <Typography>No courses available</Typography>
           </Grid>
         ) : (
-          allCourses.map(course => (
+          allCourses.map((course) => (
             <Grid item xs={12} sm={6} md={4} key={course._id}>
               <Card>
                 <CardMedia
@@ -114,44 +128,11 @@ const UserCourses = () => {
                   </Typography>
                 </CardContent>
                 <CardActions>
-                  {purchasedCourses.some(pc => pc._id === course._id) ? (
+                  {purchasedCourses.some((pc) => pc._id === course._id) ? (
                     <Button size="small" disabled>Purchased</Button>
                   ) : (
                     <Button size="small" onClick={() => handlePurchase(course._id)}>Purchase</Button>
                   )}
-                </CardActions>
-              </Card>
-            </Grid>
-          ))
-        )}
-      </Grid>
-
-      <Typography variant="h4" gutterBottom sx={{ mt: 4 }}>
-        Purchased Courses
-      </Typography>
-      <Grid container spacing={3}>
-        {purchasedCourses.length === 0 ? (
-          <Grid item xs={12}>
-            <Typography>No purchased courses</Typography>
-          </Grid>
-        ) : (
-          purchasedCourses.map(course => (
-            <Grid item xs={12} sm={6} md={4} key={course._id}>
-              <Card>
-                <CardMedia
-                  component="img"
-                  height="140"
-                  image={course.imageLink || 'https://via.placeholder.com/300x140?text=Course+Image'}
-                  alt={course.title}
-                />
-                <CardContent>
-                  <Typography variant="h6">{course.title}</Typography>
-                  <Typography variant="body2" color="text.secondary">
-                    {course.description}
-                  </Typography>
-                </CardContent>
-                <CardActions>
-                  <Button size="small" href={`/course/${course._id}`}>Go to Course</Button>
                 </CardActions>
               </Card>
             </Grid>
@@ -164,6 +145,7 @@ const UserCourses = () => {
           {error}
         </Alert>
       </Snackbar>
+
       <Snackbar open={!!success} autoHideDuration={6000} onClose={() => setSuccess(null)}>
         <Alert onClose={() => setSuccess(null)} severity="success" sx={{ width: '100%' }}>
           {success}
