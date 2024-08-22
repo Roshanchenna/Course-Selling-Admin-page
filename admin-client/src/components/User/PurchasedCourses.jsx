@@ -12,7 +12,9 @@ import {
   Box,
   CircularProgress,
   Snackbar,
-  Alert
+  Alert,
+  AppBar,
+  Toolbar
 } from '@mui/material';
 
 const PurchasedCourses = () => {
@@ -32,10 +34,23 @@ const PurchasedCourses = () => {
       }
       const response = await axios.get(`${BASE_URL}/user/purchasedCourses`, {
         headers: {
-          "Authorization": "Bearer " + token
+          "authorization": "Bearer " + token
         }
       });
-      setPurchasedCourses(response.data.purchasedCourses);
+      const courseIds = response.data.purchasedCourses;
+      console.log(response.data.purchasedCourses);
+      
+      const courseDetails = await Promise.all(courseIds.map(async (id) => {
+        const courseResponse = await axios.get(`${BASE_URL}/user/courses/${id}`, {
+            headers: {
+                "authorization": "Bearer " + token
+            }
+        });
+        return courseResponse.data;
+    }));
+    
+
+      setPurchasedCourses(courseDetails)        
       setLoading(false);
     } catch (error) {
       console.error('Error fetching purchased courses:', error.response ? error.response.data : error.message);
@@ -44,6 +59,10 @@ const PurchasedCourses = () => {
     }
   };
 
+  function handleLogout(){
+    localStorage.removeItem("token");
+    window.location = "/";
+  }
   if (loading) {
     return (
       <Box display="flex" justifyContent="center" alignItems="center" minHeight="100vh">
@@ -56,9 +75,14 @@ const PurchasedCourses = () => {
     <Box sx={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
       <Box sx={{ display: 'flex', flexGrow: 1 }}>
         <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
-          <Typography variant="h4" gutterBottom>
-            My Purchased Courses
+        <AppBar position="static">
+        <Toolbar>
+          <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
+            Courses
           </Typography>
+          <Button color="inherit" onClick={handleLogout}>Logout</Button>
+        </Toolbar>
+      </AppBar>
           <Grid container spacing={3}>
             {purchasedCourses.length === 0 ? (
               <Grid item xs={12}>
@@ -66,7 +90,7 @@ const PurchasedCourses = () => {
               </Grid>
             ) : (
               purchasedCourses.map(course => (
-                <Grid item xs={12} sm={6} md={4} key={course._id}>
+                <Grid item xs={12} sm={6} md={4} key={course}>
                   <Card>
                     <CardMedia
                       component="img"
@@ -85,20 +109,15 @@ const PurchasedCourses = () => {
                     </CardContent>
                     <CardActions>
                       <Button size="small" color="primary" href={`/course/${course._id}`}>
-                        Go to Course
+                        Purchased Course
                       </Button>
                     </CardActions>
                   </Card>
                 </Grid>
               ))
+              
             )}
           </Grid>
-{/* 
-          <Snackbar open={!!error} autoHideDuration={6000} onClose={() => setError(null)}>
-            {/* <Alert onClose={() => setError(null)} severity="error" sx={{ width: '100%' }}>
-              {error}
-            </Alert> */}
-          {/* </Snackbar> */}
         </Box>
       </Box>
     </Box>

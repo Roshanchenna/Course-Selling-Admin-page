@@ -36,7 +36,7 @@ router.post('/signup', async (req, res) => {
   router.post('/courses/:courseId', authenticateJwt, async (req, res) => {
     const course = await Course.findById(req.params.courseId);
     if (course && course.published) {
-        const user = await User.findById(req.user.id);
+        const user = await User.findOne({username: req.user.username});
         if (user) {
             if (!user.purchasedCourses.includes(course._id)) {
                 user.purchasedCourses.push(course);
@@ -52,10 +52,26 @@ router.post('/signup', async (req, res) => {
         res.status(404).json({ message: 'Course not found or not available for purchase' });
     }
   });
+
+router.get('/courses/:id', async (req, res) => {
+  const courseId = req.params.id;
+  try {
+      const course = await Course.findById(courseId); 
+      if (course) {
+          res.json(course);
+      } else {
+          res.status(404).json({ message: 'Course not found' });
+      }
+  } catch (error) {
+      res.status(500).json({ message: 'Error fetching course details', error });
+  }
+});
+
   
   router.get('/purchasedCourses', authenticateJwt, async (req, res) => {
     console.log('Authenticated user:', req.user);
-    const user = await User.findOne(req.user)
+    
+    const user = await User.findOne({ username: req.user.username });
     if (user) {
       res.json({ purchasedCourses: user.purchasedCourses || [] });
     } else {

@@ -37,6 +37,7 @@ const UserCourses = () => {
         },
       });
       setAllCourses(response.data.courses);
+      
       setLoading(false);
     } catch (error) {
       console.error('Error fetching courses:', error);
