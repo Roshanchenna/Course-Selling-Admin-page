@@ -68,12 +68,10 @@ const UserCourses = () => {
           Authorization: `Bearer ${localStorage.getItem("token")}`,
         },
       });
-      console.log('Response:', response);
       setSuccess('Course purchased successfully!');
       fetchPurchasedCourses();
     } catch (error) {
-      console.error('Error purchasing course:', error.response?.data || error.message);
-      setError('Failed to purchase course');
+      setError('Course is already purchased');
     }
   };
   
@@ -141,17 +139,17 @@ const UserCourses = () => {
         )}
       </Grid>
 
-      {/* <Snackbar open={!!error} autoHideDuration={6000} onClose={() => setError(null)}>
+      <Snackbar open={!!error} autoHideDuration={6000} onClose={() => setError(null)}>
         <Alert onClose={() => setError(null)} severity="error" sx={{ width: '100%' }}>
           {error}
         </Alert>
-      </Snackbar> */}
+      </Snackbar>
 
-      {/* <Snackbar open={!!success} autoHideDuration={6000} onClose={() => setSuccess(null)}>
+      <Snackbar open={!!success} autoHideDuration={6000} onClose={() => setSuccess(null)}>
         <Alert onClose={() => setSuccess(null)} severity="success" sx={{ width: '100%' }}>
           {success}
         </Alert>
-      </Snackbar> */}
+      </Snackbar>
     </Box>
   );
 };
