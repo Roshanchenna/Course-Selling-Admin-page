@@ -11,10 +11,8 @@ import {
   Button,
   Box,
   CircularProgress,
-  Snackbar,
-  Alert,
   AppBar,
-  Toolbar
+  Toolbar,
 } from '@mui/material';
 
 const PurchasedCourses = () => {
@@ -28,29 +26,31 @@ const PurchasedCourses = () => {
 
   const fetchPurchasedCourses = async () => {
     try {
-      const token = localStorage.getItem("token");
+      const token = localStorage.getItem('token');
       if (!token) {
-        throw new Error("No token found");
+        throw new Error('No token found');
       }
       const response = await axios.get(`${BASE_URL}/user/purchasedCourses`, {
         headers: {
-          "authorization": "Bearer " + token
-        }
+          authorization: 'Bearer ' + token,
+        },
       });
       const courseIds = response.data.purchasedCourses;
       console.log(response.data.purchasedCourses);
-      
-      const courseDetails = await Promise.all(courseIds.map(async (id) => {
-        const courseResponse = await axios.get(`${BASE_URL}/user/courses/${id}`, {
-            headers: {
-                "authorization": "Bearer " + token
-            }
-        });
-        return courseResponse.data;
-    }));
-    
 
-      setPurchasedCourses(courseDetails)        
+      const courseDetails = await Promise.all(
+        courseIds.map(async (id) => {
+          const courseResponse = await axios.get(`${BASE_URL}/user/courses/${id}`, {
+            headers: {
+              authorization: 'Bearer ' + token,
+            },
+          });
+          return courseResponse.data;
+        })
+      );
+
+      setPurchasedCourses(courseDetails);
+      
       setLoading(false);
     } catch (error) {
       console.error('Error fetching purchased courses:', error.response ? error.response.data : error.message);
@@ -59,10 +59,11 @@ const PurchasedCourses = () => {
     }
   };
 
-  function handleLogout(){
-    localStorage.removeItem("token");
-    window.location = "/";
-  }
+  const handleLogout = () => {
+    localStorage.removeItem('token');
+    window.location = '/';
+  };
+
   if (loading) {
     return (
       <Box display="flex" justifyContent="center" alignItems="center" minHeight="100vh">
@@ -73,52 +74,56 @@ const PurchasedCourses = () => {
 
   return (
     <Box sx={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
-      <Box sx={{ display: 'flex', flexGrow: 1 }}>
-        <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
-        <AppBar position="static">
+      <AppBar position="static">
         <Toolbar>
           <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
             Courses
           </Typography>
-          <Button color="inherit" onClick={handleLogout}>Logout</Button>
+          <Button color="inherit" onClick={handleLogout}>
+            Logout
+          </Button>
         </Toolbar>
       </AppBar>
-          <Grid container spacing={3}>
-            {purchasedCourses.length === 0 ? (
-              <Grid item xs={12}>
-                <Typography>You haven't purchased any courses yet.</Typography>
+
+      <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
+        <Grid container spacing={3}>
+          {purchasedCourses.length === 0 ? (
+            <Grid item xs={12}>
+              <Typography variant="h6" align="center">
+                You haven't purchased any courses yet.
+              </Typography>
+            </Grid>
+          ) : (
+            purchasedCourses.map((course) => (
+              <Grid item xs={12} sm={6} md={4} key={course._id}>
+                <Card sx={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
+                  <CardMedia
+                    component="img"
+                    height="140"
+                    image={course.imageLink || 'https://via.placeholder.com/300x140?text=Course+Image'}
+                    alt={course.title}
+                  />
+                  <CardContent sx={{ flexGrow: 1 }}>
+                    <Typography variant="h6" gutterBottom>
+                      {course.title}
+                    </Typography>
+                    <Typography variant="body2" color="text.secondary">
+                      {course.description}
+                    </Typography>
+                    <Typography variant="body2" color="text.secondary">
+                      Instructor: {course.creator ? course.creator.username : 'Unknown'}
+                    </Typography>
+                  </CardContent>
+                  <CardActions>
+                    <Button size="small" color="primary">
+                      Purchased Course
+                    </Button>
+                  </CardActions>
+                </Card>
               </Grid>
-            ) : (
-              purchasedCourses.map(course => (
-                <Grid item xs={12} sm={6} md={4} key={course}>
-                  <Card>
-                    <CardMedia
-                      component="img"
-                      height="140"
-                      image={course.imageLink || 'https://via.placeholder.com/300x140?text=Course+Image'}
-                      alt={course.title}
-                    />
-                    <CardContent>
-                      <Typography variant="h6">{course.title}</Typography>
-                      <Typography variant="body2" color="text.secondary">
-                        {course.description}
-                      </Typography>
-                      <Typography variant="body2" color="text.secondary">
-                        Instructor: {course.creator ? course.creator.username : 'Unknown'}
-                      </Typography>
-                    </CardContent>
-                    <CardActions>
-                      <Button size="small" color="primary" href={`/course/${course._id}`}>
-                        Purchased Course
-                      </Button>
-                    </CardActions>
-                  </Card>
-                </Grid>
-              ))
-              
-            )}
-          </Grid>
-        </Box>
+            ))
+          )}
+        </Grid>
       </Box>
     </Box>
   );
