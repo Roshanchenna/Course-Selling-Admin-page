@@ -32,7 +32,7 @@ const AdminSidebar = ({ adminName }) => {
     >
       <Box sx={{ p: 2 }}>
         <Typography variant="h6" sx={{ fontWeight: 'bold', color: '#333' }}>
-          {adminName.toUpperCase() || 'Admin'}
+          {adminName.charAt(0).toUpperCase() + adminName.slice(1) || 'Admin'}
         </Typography>
       </Box>
       <List>

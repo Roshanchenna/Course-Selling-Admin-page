@@ -26,14 +26,14 @@ function UserSidebar({userName}) {
                     width: 240,
                     boxSizing: 'border-box',
                 },
-                height: '100vh',
+                height: '100',
                 bgcolor: 'background.paper',
                 borderRight: '1px solid rgba(0, 0, 0, 0.12)',
             }}
         >
             <Box sx={{ p: 2 }}>
                 <Typography variant="h6" noWrap component="div">
-                    {userName ? userName.toUpperCase() : 'user' }
+                    {userName ? userName.charAt(0).toUpperCase() + userName.slice(1) : 'user' }
                 </Typography>
             </Box>
             <List>

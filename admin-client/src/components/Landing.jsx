@@ -20,7 +20,7 @@ export const Landing = () => {
                     textAlign: 'center', 
                     mb: 4,
                 }}>
-                    Welcome to Coursera
+                    Welcome to Skillshop
                 </Typography>
                 <Grid container spacing={3} justifyContent="center">
                     {['Admin', 'User'].map((userType) => (

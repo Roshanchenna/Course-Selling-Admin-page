@@ -43,11 +43,9 @@ function Courses() {
                     Authorization: `Bearer ${localStorage.getItem('token')}`
                 }
             });
-            // Remove the deleted course from the state
             setCourses(courses.filter(course => course._id !== courseId));
         } catch (error) {
             console.error("Failed to delete course:", error);
-            // Optionally, show an error message to the user
         }
     };
 
@@ -155,7 +153,7 @@ function CourseCard({ course, navigate, onDelete }) {
                     {course.title}
                 </Typography>
                 <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
-                    {course.description.length > 100 
+                   Description: {course.description.length > 100 
                         ? `${course.description.substring(0, 100)}...` 
                         : course.description}
                 </Typography>

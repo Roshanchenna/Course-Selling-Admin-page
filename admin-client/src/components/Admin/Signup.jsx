@@ -29,19 +29,11 @@ function Signup() {
         } catch (error) {
             console.error("Signup error:", error);
             if (error.response) {
-                // The request was made and the server responded with a status code
-                // that falls out of the range of 2xx
                 console.error("Error data:", error.response.data);
-                console.error("Error status:", error.response.status);
-                console.error("Error headers:", error.response.headers);
                 setError(error.response.data.message || "An error occurred during signup.");
             } else if (error.request) {
-                // The request was made but no response was received
-                console.error("Error request:", error.request);
                 setError("No response received from the server. Please try again.");
             } else {
-                // Something happened in setting up the request that triggered an Error
-                console.error('Error message:', error.message);
                 setError("An unexpected error occurred. Please try again.");
             }
         }
@@ -49,7 +41,7 @@ function Signup() {
 
     return (
         <Box sx={{
-            height: 'calc(100vh - 64px)',
+            height: '100%',
             width: '100%',
             display: 'flex',
             flexDirection: 'column',

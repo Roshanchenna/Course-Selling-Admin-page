@@ -58,8 +58,6 @@ router.post('/signup', (req, res) => {
   
   router.post('/courses', authenticateJwt, async (req, res) => {
     try {
-        console.log("Received request body:", JSON.stringify(req.body, null, 2));
-        console.log("Authenticated user:", JSON.stringify(req.user, null, 2));
 
         const { title, description, price, imageLink, published } = req.body;
         

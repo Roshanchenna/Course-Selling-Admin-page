@@ -36,7 +36,6 @@ function AddCourse() {
                     "Authorization": `Bearer ${token}`
                 }
             });
-            console.log("Server response:", response.data);
             setSuccess(true);
             setTimeout(() => {
                 navigate('/admin/courses');
