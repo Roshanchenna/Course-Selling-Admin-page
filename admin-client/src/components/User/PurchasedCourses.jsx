@@ -50,6 +50,8 @@ const PurchasedCourses = () => {
       );
 
       setPurchasedCourses(courseDetails);
+      console.log(courseDetails);
+      
       
       setLoading(false);
     } catch (error) {
@@ -108,10 +110,13 @@ const PurchasedCourses = () => {
                       {course.title}
                     </Typography>
                     <Typography variant="body2" color="text.secondary">
-                      {course.description}
+                      Description: {course.description}
                     </Typography>
                     <Typography variant="body2" color="text.secondary">
-                      Instructor: {course.creator ? course.creator.username : 'Unknown'}
+                      Price: {course.price}$
+                    </Typography>
+                    <Typography variant="body2" color="text.secondary">
+                      Instructor: {course.creator ? course.creator.username.charAt(0).toUpperCase() + course.creator.username.slice(1) : 'Unknown'}
                     </Typography>
                   </CardContent>
                   <CardActions>

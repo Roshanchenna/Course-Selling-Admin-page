@@ -56,7 +56,7 @@ router.post('/signup', async (req, res) => {
 router.get('/courses/:id', async (req, res) => {
   const courseId = req.params.id;
   try {
-      const course = await Course.findById(courseId); 
+      const course = await Course.findById(courseId).populate('creator', 'username'); 
       if (course) {
           res.json(course);
       } else {
@@ -69,8 +69,6 @@ router.get('/courses/:id', async (req, res) => {
 
   
   router.get('/purchasedCourses', authenticateJwt, async (req, res) => {
-    console.log('Authenticated user:', req.user);
-    
     const user = await User.findOne({ username: req.user.username });
     if (user) {
       res.json({ purchasedCourses: user.purchasedCourses || [] });

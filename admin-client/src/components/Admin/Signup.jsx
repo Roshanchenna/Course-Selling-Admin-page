@@ -25,7 +25,7 @@ function Signup() {
             const data = response.data;
             localStorage.setItem("token", data.token);
             setUser({userEmail: email, isLoading: false});
-            navigate("/signin");
+            navigate("/admin/signin");
         } catch (error) {
             console.error("Signup error:", error);
             if (error.response) {
