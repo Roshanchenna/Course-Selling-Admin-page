@@ -1,14 +1,14 @@
-const mongoose = require("mongoose");
-const express = require('express');
-const { User, Course, Admin } = require("../db");
-const jwt = require('jsonwebtoken');
-const { SECRET } = require("../middleware/auth")
-const { authenticateJwt } = require("../middleware/auth");
+import mongoose from "mongoose";
+import express from "express";
+import {Course, Admin } from "../db";
+import jwt from "jsonwebtoken";
+import { SECRET, authenticateJwt } from "../middleware/auth";
 
 const router = express.Router();
 
 router.get("/me", authenticateJwt, async (req, res) => {
-    const admin = await Admin.findOne({ username: req.user.username });
+  const adminId = req.headers["user"];
+    const admin = await Admin.findById(adminId);
     if (!admin) {
       res.json({msg: "Admin doesn't exist"})
       return
@@ -18,9 +18,9 @@ router.get("/me", authenticateJwt, async (req, res) => {
     })
 });
 
-router.post('/signup', (req, res) => {
+router.post('/signup', async (req, res) => {
     const { username, password } = req.body;
-    function callback(admin) {
+    const admin = await Admin.findOne({username});
       if (admin) {
         res.status(403).json({ message: 'Admin already exists' });
       } else {
@@ -28,12 +28,10 @@ router.post('/signup', (req, res) => {
         const newAdmin = new Admin(obj);
         newAdmin.save();
 
-        const token = jwt.sign({ username, role: 'admin' }, SECRET, { expiresIn: '1h' });
+        const token = jwt.sign({ id: newAdmin._id, role: 'admin' }, SECRET, { expiresIn: '1h' });
         res.json({ message: 'Admin created successfully', token });
       }
   
-    }
-    Admin.findOne({ username }).then(callback);
   });
   
   router.post('/login', async (req, res) => {
@@ -48,11 +46,14 @@ router.post('/signup', (req, res) => {
   });
   
   router.get('/courses', authenticateJwt, async (req, res) => {
+    const adminId = req.headers["user"];
     try {
-      const courses = await Course.find({ creator: req.user.id });
+      const admin = await Admin.findById(adminId)
+      const courses = await Course.find({ creator:admin});
       res.json({ courses });
     } catch (error) {
-      res.status(500).json({ message: 'Error fetching courses', error: error.message });
+      const errorMessage = (error as Error).message
+      res.status(500).json({ message: 'Error fetching courses', error: errorMessage });
     }
   });
   
@@ -60,14 +61,16 @@ router.post('/signup', (req, res) => {
     try {
 
         const { title, description, price, imageLink, published } = req.body;
+        const adminId = req.headers["user"];
+        const admin = await Admin.findById(adminId);
         
-        if (!req.user) {
+        if (!admin) {
             console.log("req.user is undefined");
             return res.status(400).json({ message: 'User information is missing' });
         }
 
-        if (!req.user.id) {
-            console.log("req.user.id is undefined. req.user:", req.user);
+        if (!admin.id) {
+            console.log("req.user.id is undefined. req.user:", admin);
             return res.status(400).json({ message: 'User ID is missing' });
         }
 
@@ -82,19 +85,15 @@ router.post('/signup', (req, res) => {
             price,
             imageLink,
             published,
-            creator: req.user.id
+            creator: admin._id
         });
 
         const savedCourse = await course.save();
 
         res.json({ message: 'Course created successfully', courseId: savedCourse.id });
     } catch (error) {
-        console.error('Error creating course:', error);
-        if (error.name === 'ValidationError') {
-            const validationErrors = Object.values(error.errors).map(err => err.message);
-            return res.status(400).json({ message: 'Validation error', errors: validationErrors });
-        }
-        res.status(500).json({ message: 'Error creating course', error: error.message, stack: error.stack });
+      const errorMessage = (error as Error).message
+        res.status(500).json({ message: 'Error creating course', error: errorMessage});
     }
   });
   
@@ -108,8 +107,9 @@ router.post('/signup', (req, res) => {
   });
   
   router.get('/courses', authenticateJwt, async (req, res) => {
+    const adminId = req.headers["user"];
     try {
-      const admin = await Admin.findOne({ username: req.user.username });
+      const admin = await Admin.findById(adminId);
       if (!admin) {
         return res.status(403).json({ message: 'Admin not found' });
       }
@@ -117,7 +117,8 @@ router.post('/signup', (req, res) => {
       const courses = await Course.find({ creator: admin._id });
       res.json({ courses });
     } catch (error) {
-      res.status(500).json({ message: 'Error fetching courses', error: error.message });
+      const errorMessage = (error as Error).message
+      res.status(500).json({ message: 'Error fetching courses', error: errorMessage });
     }
   });
   
@@ -128,8 +129,9 @@ router.post('/signup', (req, res) => {
   });
 
   router.delete('/courses/:courseId', authenticateJwt, async (req, res) => {
+    const adminId = req.headers["user"];
     try {
-      const admin = await Admin.findOne({ username: req.user.username });
+      const admin = await Admin.findById(adminId)
       if (!admin) {
         return res.status(403).json({ message: 'Admin not found' });
       }
@@ -141,7 +143,6 @@ router.post('/signup', (req, res) => {
         return res.status(404).json({ message: 'Course not found' });
       }
 
-      // Check if the course belongs to the admin
       if (course.creator.toString() !== admin._id.toString()) {
         return res.status(403).json({ message: 'You are not authorized to delete this course' });
       }
@@ -156,8 +157,9 @@ router.post('/signup', (req, res) => {
       res.json({ message: 'Course deleted successfully' });
     } catch (error) {
       console.error('Error deleting course:', error);
-      res.status(500).json({ message: 'Error deleting course', error: error.message });
+      const errorMessage = (error as Error).message
+      res.status(500).json({ message: 'Error deleting course', error: errorMessage });
     }
   });
 
-  module.exports = router
+export default router
