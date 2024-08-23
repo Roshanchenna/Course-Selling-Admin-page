@@ -10,7 +10,7 @@ const router = express.Router();
 router.get("/me", authenticateJwt, async (req, res) => {
     const admin = await Admin.findOne({ username: req.user.username });
     if (!admin) {
-      res.status(403).json({msg: "Admin doesnt exist"})
+      res.json({msg: "Admin doesn't exist"})
       return
     }
     res.json({
@@ -85,10 +85,7 @@ router.post('/signup', (req, res) => {
             creator: req.user.id
         });
 
-        console.log("Course object before save:", JSON.stringify(course, null, 2));
-
         const savedCourse = await course.save();
-        console.log("Saved course:", JSON.stringify(savedCourse, null, 2));
 
         res.json({ message: 'Course created successfully', courseId: savedCourse.id });
     } catch (error) {

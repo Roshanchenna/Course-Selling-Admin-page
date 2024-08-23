@@ -97,6 +97,25 @@ function InitUser() {
                     "Authorization": "Bearer " + localStorage.getItem("token")
                 }
             })
+            if(!response.data.username){
+                const res1 = await axios.get(`${BASE_URL}/user/me`,{
+                    headers:{
+                        "Authorization": "Bearer " + localStorage.getItem("token")
+                    }
+                })
+
+                if(res1.data.username){
+                    setUser({
+                        isLoading: false,
+                        userEmail: res1.data.username
+                    })
+                }else{
+                    setUser({
+                        isLoading: false,
+                        userEmail: null
+                    })
+                }
+            }
 
             if (response.data.username) {
                 setUser({
