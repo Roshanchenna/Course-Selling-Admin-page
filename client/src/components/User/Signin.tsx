@@ -8,16 +8,21 @@ import {useSetRecoilState} from "recoil";
 import {userState} from "../../store/atoms/user.js";
 import { BASE_URL } from "../../config.js";
 
+type UserState = {
+    userEmail: string | null;
+    isLoading: boolean;
+};
+
 function Signin() {
     const [email, setEmail] = useState("")
     const [password, setPassword] = useState("")
     const [error, setError] = useState("")
     const navigate = useNavigate()
-    const setUser = useSetRecoilState(userState);
+    const setUser = useSetRecoilState<UserState>(userState);
 
     const handleSignin = async () => {
         try {
-            setError(""); // Clear any previous errors
+            setError("");
             const response = await axios.post(`${BASE_URL}/user/login`, {
                 username: email,
                 password: password
@@ -30,21 +35,22 @@ function Signin() {
             localStorage.setItem("token", data.token);
             setUser({
                 userEmail: email,
-                isLoading: false
+                isLoading: false,
             });
             navigate("/user/courses");
-        } catch (error) {
+        } catch (error: unknown) {
             console.error("Login error:", error);
-            if (error.response) {
+            if (axios.isAxiosError(error) && error.response) {
                 console.error("Error data:", error.response.data);
                 setError(error.response.data.message || "An error occurred during login.");
-            } else if (error.request) {
-                setError("No response received from the server. Please try again.");
+            } else if (error instanceof Error) {
+                setError(error.message || "An unexpected error occurred. Please try again.");
             } else {
-                setError("An unexpected error occurred. Please try again.", error.message);
+                setError("No response received from the server. Please try again.");
             }
         }
     };
+    
 
     return (
         <Box sx={{

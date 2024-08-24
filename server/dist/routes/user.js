@@ -59,7 +59,7 @@ router.get('/courses', auth_1.authenticateJwt, (req, res) => __awaiter(void 0, v
 router.post('/courses/:courseId', auth_1.authenticateJwt, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const userId = req.headers["user"];
-        const course = yield db_1.Course.findById(req.params.courseId);
+        const course = yield db_1.Course.findOne({ _id: req.params.courseId });
         if (course && course.published) {
             const user = yield db_1.User.findById(userId);
             if (user) {

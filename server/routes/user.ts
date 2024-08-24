@@ -52,7 +52,7 @@ router.post('/signup', async (req, res) => {
   router.post('/courses/:courseId', authenticateJwt, async (req: Request, res: Response) => {
     try {
         const userId = req.headers["user"];
-        const course = await Course.findById(req.params.courseId);
+        const course = await Course.findOne({_id: req.params.courseId});
         if (course && course.published) {
             const user = await User.findById(userId)
             if (user) {

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import axios from 'axios';
 import { BASE_URL } from '../../config.js';
 import {
@@ -17,12 +17,24 @@ import {
   Toolbar,
 } from '@mui/material';
 
+type CourseState = {
+  _id: number,
+  title: string,
+  description: string,
+  imageLink: string,
+  creator: Creator,
+  price: number
+}
+type Creator = {
+  username: string
+}
+
 const UserCourses = () => {
   const [allCourses, setAllCourses] = useState([]);
   const [purchasedCourses, setPurchasedCourses] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
-  const [success, setSuccess] = useState(null);
+  const [error, setError] = useState<string | null>(null);
+  const [success, setSuccess] = useState<string | null>(null);
 
   useEffect(() => {
     fetchAllCourses();
@@ -61,7 +73,7 @@ const UserCourses = () => {
     }
   };
 
-  const handlePurchase = async (courseId) => {
+  const handlePurchase = async (courseId: number) => {
     try {
       const response = await axios.post(`${BASE_URL}/user/courses/${courseId}`, {}, {
         headers: {
@@ -70,6 +82,8 @@ const UserCourses = () => {
       });
       setSuccess('Course purchased successfully!');
       fetchPurchasedCourses();
+      console.log(response);
+      
     } catch (error) {
       setError('Course is already purchased');
     }
@@ -77,7 +91,7 @@ const UserCourses = () => {
   
   const handleLogout = () => {
     localStorage.removeItem('token');
-    window.location = "/";
+    window.location.href = "/";
   };
 
   if (loading) {
@@ -105,7 +119,7 @@ const UserCourses = () => {
             <Typography>No courses available</Typography>
           </Grid>
         ) : (
-          allCourses.map((course) => (
+          allCourses.map((course: CourseState) => (
             <Grid item xs={12} sm={6} md={4} key={course._id}>
               <Card>
                 <CardMedia
@@ -127,7 +141,7 @@ const UserCourses = () => {
                   </Typography>
                 </CardContent>
                 <CardActions>
-                  {purchasedCourses.some((pc) => pc._id === course._id) ? (
+                  {purchasedCourses.some((pc: CourseState) => pc._id === course._id) ? (
                     <Button size="small" disabled>Purchased</Button>
                   ) : (
                     <Button size="small" onClick={() => handlePurchase(course._id)}>Purchase</Button>

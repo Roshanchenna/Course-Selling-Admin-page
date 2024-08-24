@@ -1,22 +1,10 @@
-import React from 'react';
-import { Box, List, ListItem, ListItemIcon, ListItemText, Typography, Button } from '@mui/material';
+import { Box, List, ListItem, ListItemIcon, ListItemText, Typography} from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import DashboardIcon from '@mui/icons-material/Dashboard';
 import SchoolIcon from '@mui/icons-material/School';
-import ExitToAppIcon from '@mui/icons-material/ExitToApp';
-import { useRecoilValue, useSetRecoilState } from 'recoil';
-import { userState } from '../../store/atoms/user.js';
 
-function UserSidebar({userName}) {
+function UserSidebar({userName}: {userName : string | null}) {
     const navigate = useNavigate();
-    const setUser = useSetRecoilState(userState);
-
-    const handleLogout = () => {
-        localStorage.removeItem('token');
-        setUser({userEmail: null, isLoading: false});
-        navigate('/');
-    };
-
     return (
         <Box
             sx={{

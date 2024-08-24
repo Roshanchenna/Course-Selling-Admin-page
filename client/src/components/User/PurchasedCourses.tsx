@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import axios from 'axios';
 import { BASE_URL } from '../../config.js';
 import {
@@ -15,10 +15,22 @@ import {
   Toolbar,
 } from '@mui/material';
 
+type CourseState = {
+  _id: number,
+  title: string,
+  description: string,
+  imageLink: string,
+  creator: Creator,
+  price: number
+}
+type Creator = {
+  username: string
+}
+
 const PurchasedCourses = () => {
-  const [purchasedCourses, setPurchasedCourses] = useState([]);
+  const [purchasedCourses, setPurchasedCourses] = useState<CourseState[]>([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+  const [errors, setError] = useState<string | null>(null);
 
   useEffect(() => {
     fetchPurchasedCourses();
@@ -36,10 +48,9 @@ const PurchasedCourses = () => {
         },
       });
       const courseIds = response.data.purchasedCourses;
-      console.log(response.data.purchasedCourses);
 
       const courseDetails = await Promise.all(
-        courseIds.map(async (id) => {
+        courseIds.map(async (id: string) => {
           const courseResponse = await axios.get(`${BASE_URL}/user/courses/${id}`, {
             headers: {
               authorization: 'Bearer ' + token,
@@ -54,16 +65,18 @@ const PurchasedCourses = () => {
       
       
       setLoading(false);
-    } catch (error) {
-      console.error('Error fetching purchased courses:', error.response ? error.response.data : error.message);
-      setError(error.message || 'Failed to fetch purchased courses');
-      setLoading(false);
+    } catch (error: unknown) {
+      console.error('Error fetching purchased courses:');
+      setError('Failed to fetch purchased courses');
+      setLoading(false);   
+      console.log(errors);
+         
     }
   };
 
   const handleLogout = () => {
     localStorage.removeItem('token');
-    window.location = '/';
+    window.location.href = '/';
   };
 
   if (loading) {
@@ -96,7 +109,7 @@ const PurchasedCourses = () => {
               </Typography>
             </Grid>
           ) : (
-            purchasedCourses.map((course) => (
+            purchasedCourses.map((course: CourseState) => (
               <Grid item xs={12} sm={6} md={4} key={course._id}>
                 <Card sx={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
                   <CardMedia

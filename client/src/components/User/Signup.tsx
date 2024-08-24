@@ -26,12 +26,12 @@ function Signup() {
             localStorage.setItem("token", data.token);
             setUser({userEmail: email, isLoading: false});
             navigate("/user/signin");
-        } catch (error) {
+        } catch (error: unknown) {
             console.error("Signup error:", error);
-            if (error.response) {
+            if (axios.isAxiosError(error) && error.response) {
                 console.error("Error data:", error.response.data);
                 setError(error.response.data.message || "An error occurred during signup.");
-            } else if (error.request) {
+            } else if (error instanceof Error) {
                 setError("No response received from the server. Please try again.");
             } else {
                 setError("An unexpected error occurred. Please try again.");
