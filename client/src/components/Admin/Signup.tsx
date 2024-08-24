@@ -28,11 +28,16 @@ function Signup() {
             navigate("/admin/signin");
         } catch (error) {
             console.error("Signup error:", error);
-            if (error.response) {
-                console.error("Error data:", error.response.data);
-                setError(error.response.data.message || "An error occurred during signup.");
-            } else if (error.request) {
-                setError("No response received from the server. Please try again.");
+        
+            if (axios.isAxiosError(error)) {
+                if (error.response) {
+                    console.error("Error data:", error.response.data);
+                    setError(error.response.data?.message || "An error occurred during signup.");
+                } else if (error.request) {
+                    setError("No response received from the server. Please try again.");
+                } else {
+                    setError(error.message || "An unexpected error occurred. Please try again.");
+                }
             } else {
                 setError("An unexpected error occurred. Please try again.");
             }

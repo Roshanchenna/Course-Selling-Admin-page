@@ -2,11 +2,11 @@ import Button from '@mui/material/Button';
 import TextField from "@mui/material/TextField";
 import {Card, Typography, Box, Container, Alert} from "@mui/material";
 import {useState} from "react";
-import axios from "axios";
 import {useNavigate} from "react-router-dom";
 import {useSetRecoilState} from "recoil";
 import {userState} from "../../store/atoms/user.js";
 import { BASE_URL } from "../../config.js";
+import axios from 'axios';
 
 function Signin() {
     const [email, setEmail] = useState("")
@@ -35,15 +35,22 @@ function Signin() {
             navigate("/admin/courses");
         } catch (error) {
             console.error("Login error:", error);
-            if (error.response) {
-                console.error("Error data:", error.response.data);
-                setError(error.response.data.message || "An error occurred during login.");
-            } else if (error.request) {
-                setError("No response received from the server. Please try again.");
+        
+            if (axios.isAxiosError(error)) {
+                if (error.response) {
+                    console.error("Error data:", error.response.data);
+                    setError(error.response.data?.message || "An error occurred during login.");
+                } else if (error.request) {
+                    setError("No response received from the server. Please try again.");
+                } else {
+                    setError(error.message || "An unexpected error occurred. Please try again.");
+                }
             } else {
                 setError("An unexpected error occurred. Please try again.");
             }
         }
+        
+        
     };
 
     return (

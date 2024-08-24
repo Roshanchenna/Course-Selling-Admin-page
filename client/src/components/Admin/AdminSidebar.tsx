@@ -1,14 +1,14 @@
-import React from 'react';
 import { Drawer, List, ListItem, ListItemIcon, ListItemText, Typography, Box } from '@mui/material';
 import { Link, useLocation } from 'react-router-dom';
-import DashboardIcon from '@mui/icons-material/Dashboard';
 import SchoolIcon from '@mui/icons-material/School';
 import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
-import SettingsIcon from '@mui/icons-material/Settings';
 
 const drawerWidth = 240;
 
-const AdminSidebar = ({ adminName }) => {
+interface Admin {
+  adminName: string | null;
+}
+const AdminSidebar = ({ adminName }: Admin) => {
   const location = useLocation();
 
   const menuItems = [
@@ -32,7 +32,7 @@ const AdminSidebar = ({ adminName }) => {
     >
       <Box sx={{ p: 2 }}>
         <Typography variant="h6" sx={{ fontWeight: 'bold', color: '#333' }}>
-          {adminName.charAt(0).toUpperCase() + adminName.slice(1) || 'Admin'}
+        {adminName ? adminName.charAt(0).toUpperCase() + adminName.slice(1) : 'Admin'}
         </Typography>
       </Box>
       <List>

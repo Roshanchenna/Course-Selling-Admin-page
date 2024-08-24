@@ -8,8 +8,16 @@ import axios from "axios";
 import { useSetRecoilState } from "recoil";
 import { userState } from "../../store/atoms/user.js";
 
+interface CourseState  {
+    _id: number,
+    title: string,
+    description: string,
+    imageLink: string,
+    price: number
+}
+
 function Courses() {
-    const [courses, setCourses] = useState([]);
+    const [courses, setCourses] = useState<CourseState[]>([]);
     const navigate = useNavigate();
     const setUser = useSetRecoilState(userState);
 
@@ -36,7 +44,7 @@ function Courses() {
         navigate('/');
     };
 
-    const handleDeleteCourse = async (courseId) => {
+    const handleDeleteCourse = async (courseId: number) => {
         try {
             await axios.delete(`${BASE_URL}/admin/courses/${courseId}`, {
                 headers: {
@@ -119,7 +127,13 @@ function Courses() {
     );
 }
 
-function CourseCard({ course, navigate, onDelete }) {
+interface CourseCardProps {
+    course: CourseState;
+    navigate: (path: string) => void; // Adjust this type if navigate has a different signature
+    onDelete: (courseId: number) => void;// Adjust this type if onDelete has a different signature
+}
+
+function CourseCard({ course, navigate, onDelete }: CourseCardProps) {
     const [imageError, setImageError] = useState(false);
 
     const handleImageError = () => {
