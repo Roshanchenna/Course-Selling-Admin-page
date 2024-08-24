@@ -28,7 +28,7 @@ router.post('/signup', async (req, res) => {
     } else {
       const newUser = new User({ username, password });
       await newUser.save();
-      const token = jwt.sign({ id: username._id, role: 'user' }, SECRET, { expiresIn: '1h' });
+      const token = jwt.sign({ id: newUser._id, role: 'user' }, SECRET, { expiresIn: '1h' });
       res.json({ message: 'User created successfully', token });
     }
   });
@@ -37,7 +37,7 @@ router.post('/signup', async (req, res) => {
     const { username, password } = req.body;
     const user = await User.findOne({ username, password });
     if (user) {
-      const token = jwt.sign({ id: username._id, role: 'user' }, SECRET, { expiresIn: '1h' });
+      const token = jwt.sign({ id: user._id, role: 'user' }, SECRET, { expiresIn: '1h' });
       res.json({ message: 'Logged in successfully', token });
     } else {
       res.status(403).json({ message: 'Invalid username or password' });
@@ -90,8 +90,9 @@ router.get('/courses/:id', async (req, res) => {
 
   
   router.get('/purchasedCourses', authenticateJwt, async (req, res) => {
-    const userId = req.headers["user"];
-    const user = await User.findById(userId)
+    const userId = req.headers["user"];      
+    const user = await User.findById(userId);
+
     if (user) {
       res.json({ purchasedCourses: user.purchasedCourses || [] });
     } else {

@@ -37,7 +37,7 @@ router.post('/signup', (req, res) => __awaiter(void 0, void 0, void 0, function*
     else {
         const newUser = new db_1.User({ username, password });
         yield newUser.save();
-        const token = jsonwebtoken_1.default.sign({ id: username._id, role: 'user' }, auth_1.SECRET, { expiresIn: '1h' });
+        const token = jsonwebtoken_1.default.sign({ id: newUser._id, role: 'user' }, auth_1.SECRET, { expiresIn: '1h' });
         res.json({ message: 'User created successfully', token });
     }
 }));
@@ -45,7 +45,7 @@ router.post('/login', (req, res) => __awaiter(void 0, void 0, void 0, function* 
     const { username, password } = req.body;
     const user = yield db_1.User.findOne({ username, password });
     if (user) {
-        const token = jsonwebtoken_1.default.sign({ id: username._id, role: 'user' }, auth_1.SECRET, { expiresIn: '1h' });
+        const token = jsonwebtoken_1.default.sign({ id: user._id, role: 'user' }, auth_1.SECRET, { expiresIn: '1h' });
         res.json({ message: 'Logged in successfully', token });
     }
     else {
