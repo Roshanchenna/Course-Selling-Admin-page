@@ -12,36 +12,39 @@ function AddCourse() {
     const [image, setImage] = useState("");
     const [price, setPrice] = useState(0);
     const [published, setPublished] = useState(false);
-    const [error, setError] = useState(null);
+    const [error, setError] = useState<string | null>(null);
     const [success, setSuccess] = useState(false);
     const navigate = useNavigate();
+const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    try {
+        const token = localStorage.getItem("token");
+        if (!token) {
+            setError("You are not authenticated. Please log in.");
+            return;
+        }
 
-    const handleSubmit = async (e) => {
-        e.preventDefault();
-        try {
-            const token = localStorage.getItem("token");
-            if (!token) {
-                setError("You are not authenticated. Please log in.");
-                return;
+        const response = await axios.post(`${BASE_URL}/admin/courses`, {
+            title,
+            description,
+            imageLink: image,
+            published,
+            price
+        }, {
+            headers: {
+                "Authorization": `Bearer ${token}`
             }
-
-            const response = await axios.post(`${BASE_URL}/admin/courses`, {
-                title,
-                description,
-                imageLink: image,
-                published,
-                price
-            }, {
-                headers: {
-                    "Authorization": `Bearer ${token}`
-                }
-            });
-            setSuccess(true);
-            setTimeout(() => {
-                navigate('/admin/courses');
-            }, 1000);
-        } catch (error) {
-            console.error("Failed to add course:", error);
+        });
+        if(response) console.log("course added");
+        
+        setSuccess(true);
+        setTimeout(() => {
+            navigate('/admin/courses');
+        }, 1000);
+    } catch (error) {
+        console.error("Failed to add course:", error);
+        
+        if (axios.isAxiosError(error)) {
             if (error.response) {
                 console.error("Error response data:", JSON.stringify(error.response.data, null, 2));
                 console.error("Error status:", error.response.status);
@@ -51,8 +54,12 @@ function AddCourse() {
                 console.error("Error message:", error.message);
             }
             setError("Failed to add course. Please try again.");
+        } else {
+            console.error("Unexpected error:", error);
+            setError("An unexpected error occurred. Please try again.");
         }
-    };
+    }
+};
 
     return (
         <Box sx={{
@@ -115,7 +122,7 @@ function AddCourse() {
                                     variant="outlined"
                                     type="number"
                                     value={price}
-                                    onChange={(e) => setPrice(e.target.value)}
+                                    onChange={(e) => setPrice(Number(e.target.value))}
                                     required
                                 />
                             </Grid>

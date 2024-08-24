@@ -1,21 +1,22 @@
 import { BrowserRouter as Router, Routes, Route, Outlet } from 'react-router-dom';
-import AdminSignin from "./components/admin/Signin.jsx";
-import AdminSignup from "./components/admin/Signup.jsx";
-import UserSignin from "./components/user/Signin.jsx";
-import UserSignup from "./components/user/Signup.jsx";
-import AddCourse from "./components/Admin/AddCourse.jsx";
-import Courses from "./components/Admin/Courses.jsx";
-import Course from "./components/Admin/Course.jsx";
-import {Landing} from "./components/Landing.jsx";
-import { userState } from "./store/atoms/user.js";
+import AdminSignin from "./components/Admin/Signin.tsx";
+import AdminSignup from "./components/Admin/Signup.tsx";
+import UserSignin from "./components/User/Signin.tsx";
+import UserSignup from "./components/User/Signup.tsx";
+import AddCourse from "./components/Admin/AddCourse.tsx";
+import Courses from "./components/Admin/Courses.tsx";
+import Course from "./components/Admin/Course.tsx";
+import {Landing} from "./components/Landing.tsx";
+import { userState } from "./store/atoms/user.ts";
 import { RecoilRoot, useSetRecoilState, useRecoilValue } from 'recoil';
 import axios from "axios";
-import {BASE_URL} from "./config.js";
-import {useEffect} from "react";
-import AdminSidebar from "./components/Admin/AdminSidebar.jsx";
-import UserSidebar from "./components/User/UserSidebar.jsx";
-import UserCourses from "./components/User/UserCourses.jsx";
-import PurchasedCourses from "./components/User/PurchasedCourses.jsx"
+import { BASE_URL } from "./config.js";
+import { useEffect } from "react";
+import AdminSidebar from "./components/Admin/AdminSidebar.tsx";
+import UserSidebar from "./components/User/UserSidebar.tsx";
+import UserCourses from "./components/User/UserCourses.tsx";
+import PurchasedCourses from "./components/User/PurchasedCourses.tsx";
+
 
 function App() {
     return (

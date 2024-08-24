@@ -2,11 +2,24 @@ import { Card, Grid, Typography, TextField, Button, Box, Container, CardMedia } 
 import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import axios from "axios";
-import { Loading } from "../../constants/Loading.jsx";
+import { Loading } from "../../constants/Loading.js";
 import { BASE_URL } from "../../config.js";
-import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
-import { courseState } from "../../store/atoms/course.js";
-import { courseTitle, coursePrice, isCourseLoading, courseImage } from "../../store/selectors/course.js";
+import {useRecoilValue, useSetRecoilState } from "recoil";
+import { courseState } from "../../store/atoms/course.ts";
+import { courseTitle, coursePrice, isCourseLoading, courseImage } from "../../store/selectors/course.ts";
+
+interface Course {
+    _id: string;
+    title: string;
+    description: string;
+    imageLink: string;
+    price: number;
+}
+
+interface CourseState{
+    isLoading ?: boolean,
+    course : Course | null
+}
 
 function Course() {
     let { courseId } = useParams();
@@ -24,6 +37,8 @@ function Course() {
         })
         .catch(e => {
             setCourse({isLoading: false, course: null});
+            console.log(e);
+            
         });
     }, []);
 
@@ -58,16 +73,20 @@ function Course() {
     );
 }
 
-function UpdateCard({ navigate }) {
-    const [courseDetails, setCourse] = useRecoilState(courseState);
-    const [title, setTitle] = useState(courseDetails.course.title);
-    const [description, setDescription] = useState(courseDetails.course.description);
-    const [image, setImage] = useState(courseDetails.course.imageLink);
-    const [price, setPrice] = useState(courseDetails.course.price);
+interface UpdateCardProps {
+    navigate: ReturnType<typeof useNavigate>;
+}
+
+function UpdateCard({ navigate }: UpdateCardProps) {
+    const courseDetails = useRecoilValue<CourseState>(courseState);
+    const [title, setTitle] = useState(courseDetails?.course?.title || " ");
+    const [description, setDescription] = useState(courseDetails?.course?.description);
+    const [image, setImage] = useState(courseDetails?.course?.imageLink);
+    const [price, setPrice] = useState(courseDetails?.course?.price);
 
     const handleUpdate = async () => {
         try {
-            await axios.put(`${BASE_URL}/admin/courses/` + courseDetails.course._id, {
+            await axios.put(`${BASE_URL}/admin/courses/` + courseDetails?.course?._id, {
                 title, description, imageLink: image, published: true, price
             }, {
                 headers: {
@@ -94,7 +113,7 @@ function UpdateCard({ navigate }) {
                 <TextField fullWidth label="Image Link" variant="outlined" value={image} onChange={(e) => setImage(e.target.value)} />
             </Grid>
             <Grid item xs={12}>
-                <TextField fullWidth label="Price" variant="outlined" type="number" value={price} onChange={(e) => setPrice(e.target.value)} />
+                <TextField fullWidth label="Price" variant="outlined" type="number" value={price} onChange={(e) => setPrice(Number(e.target.value))} />
             </Grid>
             <Grid item xs={12}>
                 <Button variant="contained" color="primary" onClick={handleUpdate} fullWidth sx={{ py: 1.5 }}>

@@ -1,4 +1,3 @@
-import { userState } from "../atoms/user";
 import {selector} from "recoil";
 import { courseState } from "../atoms/course";
 
